@@ -6,6 +6,7 @@ export interface Message {
 export interface FineTuneConfig {
   model: string;
   trainingFile: string;
+  validationFile?: string;
   epochs?: number;
   batchSize?: number;
   learningRate?: number;

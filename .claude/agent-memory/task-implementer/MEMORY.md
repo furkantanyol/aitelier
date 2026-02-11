@@ -17,20 +17,30 @@
 ## Implementation Patterns
 
 ### Command Structure
+
 - All CLI commands in `packages/cli/src/commands/`
 - Pattern: one file per command (e.g., `rate.ts`, `stats.ts`)
 - Each command exports `register{CommandName}(program: Command)` function
 - Use Commander.js for CLI framework, Inquirer.js for interactive prompts
 
 ### Testing Pattern
+
 - Tests colocated with commands (e.g., `rate.test.ts`, `stats.test.ts`)
 - Use Vitest for testing
 - Create temp directories for each test with `mkdtemp`
 - Mock Inquirer prompts with `vi.spyOn(inquirer, 'prompt')`
 - Test both success and error paths
 
+### Validation Pattern
+
+- When validating data structures, check structure validity BEFORE checking for specific required fields
+- Example: Check if message roles are valid before checking if specific roles exist
+- This provides clearer error messages and catches structural issues first
+
 ### Code Verification Workflow
+
 After every change, run this command sequence:
+
 ```bash
 pnpm turbo build && pnpm prettier --write . && pnpm turbo lint && pnpm turbo test
 ```
@@ -48,11 +58,14 @@ pnpm turbo build && pnpm prettier --write . && pnpm turbo lint && pnpm turbo tes
 - Follow KISS, DRY, YAGNI principles
 - No emojis in output unless explicitly requested
 - Use helper functions for cleaner code organization
-- Prefix unused parameters with underscore for linting
+- Prefix unused parameters with underscore for linting (only works for function args, not destructured vars)
+- For unused destructured variables, use `.values()` or refactor to avoid the variable entirely
+- Use `as const` for message role literals in tests to satisfy TypeScript strict typing
 
 ## Common Patterns
 
 ### Error Handling
+
 ```typescript
 try {
   await commandFunction();
@@ -63,6 +76,7 @@ try {
 ```
 
 ### Project Initialization Check
+
 ```typescript
 try {
   await access(join(cwd, CONFIG_FILE));
@@ -72,6 +86,7 @@ try {
 ```
 
 ### Display Formatting
+
 - Use `═` for major section dividers (70 chars)
 - Use `━` for minor section dividers (70 chars)
 - Use `│` for histogram bars and data separators

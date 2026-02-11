@@ -54,38 +54,38 @@ Track progress by checking off tasks as they're completed.
 
 ### M2.1 — `ft format` Command
 
-- [ ] Export rated examples (above threshold) to provider-specific JSONL
-- [ ] Together.ai format: standard chat messages
-- [ ] OpenAI format: standard chat messages with optional `weight` field
-- [ ] Validate output against provider schema
-- [ ] Output to `data/train.jsonl` and `data/val.jsonl`
-- [ ] Write tests
+- [x] Export rated examples (above threshold) to provider-specific JSONL
+- [x] Together.ai format: standard chat messages
+- [x] OpenAI format: standard chat messages with optional `weight` field
+- [x] Validate output against provider schema
+- [x] Output to `data/train.jsonl` and `data/val.jsonl`
+- [x] Write tests
 
 ### M2.2 — `ft split` Command
 
-- [ ] Auto-split: 80/20 train/val by default
-- [ ] Stratified by rating if enough examples
-- [ ] `ft split --ratio 0.9` for custom splits
-- [ ] Lock validation set: once assigned, val examples don't move to train
-- [ ] `ft split --reshuffle` to force re-split (with confirmation)
-- [ ] Write tests
+- [x] Auto-split: 80/20 train/val by default
+- [x] Stratified by rating if enough examples
+- [x] `ft split --ratio 0.9` for custom splits
+- [x] Lock validation set: once assigned, val examples don't move to train
+- [x] `ft split --reshuffle` to force re-split (with confirmation)
+- [x] Write tests
 
 ### M2.3 — `ft train` Command
 
-- [ ] Upload training file to Together.ai via API
-- [ ] Create LoRA fine-tune job with sensible defaults
-- [ ] Configurable: epochs, batch_size, learning_rate, lora_r, lora_alpha
-- [ ] Save job ID + config to `.ftpipeline.json` under `runs[]`
-- [ ] Requires `TOGETHER_API_KEY` env var
-- [ ] Write tests
+- [x] Upload training file to Together.ai via API
+- [x] Create LoRA fine-tune job with sensible defaults
+- [x] Configurable: epochs, batch_size, learning_rate, lora_r, lora_alpha
+- [x] Save job ID + config to `.ftpipeline.json` under `runs[]`
+- [x] Requires `TOGETHER_API_KEY` env var
+- [x] Write tests
 
 ### M2.4 — `ft status` Command
 
-- [ ] Check fine-tune job status via provider API
-- [ ] `ft status` — show latest job
-- [ ] `ft status --all` — show all runs with model IDs
-- [ ] When complete: save model ID to config
-- [ ] Write tests
+- [x] Check fine-tune job status via provider API
+- [x] `ft status` — show latest job
+- [x] `ft status --all` — show all runs with model IDs
+- [x] When complete: save model ID to config
+- [x] Write tests
 
 ---
 

@@ -15,6 +15,13 @@ export interface ProjectConfig {
     provider: string;
     startedAt: string;
     status: string;
+    hyperparameters?: {
+      epochs?: number;
+      batchSize?: number;
+      learningRate?: number;
+      loraR?: number;
+      loraAlpha?: number;
+    };
   }>;
 }
 

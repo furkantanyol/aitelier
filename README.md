@@ -1,14 +1,14 @@
-# ft-pipeline
+# aitelier
 
-[![npm version](https://img.shields.io/npm/v/ft-pipeline.svg)](https://www.npmjs.com/package/ft-pipeline)
-[![CI](https://github.com/furkantanyol/ft-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/furkantanyol/ft-pipeline/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/aitelier.svg)](https://www.npmjs.com/package/aitelier)
+[![CI](https://github.com/furkantanyol/aitelier/actions/workflows/ci.yml/badge.svg)](https://github.com/furkantanyol/aitelier/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org/)
 [![Built with TypeScript](https://img.shields.io/badge/Built%20with-TypeScript-blue)](https://www.typescriptlang.org/)
 
-> CLI for collecting, rating, formatting, and iterating on LLM fine-tuning datasets
+> Your AI atelier - craft fine-tuned models
 
-**ft-pipeline** is an opinionated workflow tool for managing the full lifecycle of fine-tuning datasets — from collecting examples to shipping production models. Vendor-agnostic, supports Together.ai with OpenAI support planned.
+**aitelier** is an opinionated workflow tool for managing the full lifecycle of fine-tuning datasets — from collecting examples to shipping production models. Vendor-agnostic, supports Together.ai with OpenAI support planned.
 
 Built for indie hackers and small teams fine-tuning open-source models (Llama, Mistral) via LoRA with 50-500 training examples iterating weekly.
 
@@ -23,15 +23,15 @@ Built for indie hackers and small teams fine-tuning open-source models (Llama, M
 - [Quick Start](#quick-start)
 - [Project Structure](#project-structure)
 - [Commands](#commands)
-  - [ft init](#ft-init)
-  - [ft add](#ft-add)
-  - [ft rate](#ft-rate)
-  - [ft stats](#ft-stats)
-  - [ft format](#ft-format)
-  - [ft split](#ft-split)
-  - [ft train](#ft-train)
-  - [ft status](#ft-status)
-  - [ft eval](#ft-eval)
+  - [ait init](#ait-init)
+  - [ait add](#ait-add)
+  - [ait rate](#ait-rate)
+  - [ait stats](#ait-stats)
+  - [ait format](#ait-format)
+  - [ait split](#ait-split)
+  - [ait train](#ait-train)
+  - [ait status](#ait-status)
+  - [ait eval](#ait-eval)
 - [Provider Setup](#provider-setup)
 - [Architecture](#architecture)
 - [Development](#development)
@@ -52,18 +52,18 @@ Built for indie hackers and small teams fine-tuning open-source models (Llama, M
 - 🚫 No version control for dataset quality improvements
 - 🔄 Re-inventing the same workflow for every new fine-tuning project
 
-**The Solution:** **ft-pipeline** gives you a clean, repeatable CLI workflow:
+**The Solution:** **aitelier** gives you a clean, repeatable CLI workflow:
 
 ```bash
-ft init        # Set up project
-ft add         # Collect training examples interactively
-ft rate        # Review and score examples
-ft stats       # Check dataset health
-ft split       # Create train/val split
-ft format      # Export to provider format
-ft train       # Kick off fine-tune job
-ft status      # Monitor training
-ft eval        # Evaluate on validation set
+ait init        # Set up project
+ait add         # Collect training examples interactively
+ait rate        # Review and score examples
+ait stats       # Check dataset health
+ait split       # Create train/val split
+ait format      # Export to provider format
+ait train       # Kick off fine-tune job
+ait status      # Monitor training
+ait eval        # Evaluate on validation set
 ```
 
 **Who it's for:**
@@ -84,25 +84,25 @@ Fine-tune a model on your company's support tickets to handle common questions.
 **Example workflow:**
 
 ```bash
-ft init
+ait init
 # → Project: support-bot
 # → Model: meta-llama/Llama-3.3-70B-Instruct
 # → System prompt: You are a helpful customer support assistant for Acme Corp.
 
-ft add
+ait add
 # → Input: How do I reset my password?
 # → Output: Visit https://acme.com/reset and enter your email...
 # → Rate: 9
 
 # Add 50-100 more examples...
 
-ft stats
+ait stats
 # → 85 examples, 80% rated 8+
 
-ft split && ft format && ft train
+ait split && ait format && ait train
 # → Training job started
 
-ft eval --compare
+ait eval --compare
 # → Base model: 65% sendable
 # → Fine-tuned: 92% sendable (+27% improvement)
 ```
@@ -118,18 +118,18 @@ Train a model to provide project-specific code review feedback.
 **Example workflow:**
 
 ```bash
-ft init
+ait init
 # → Project: code-reviewer
 # → System prompt: You are a code reviewer for a Python web app using FastAPI...
 
-ft add
+ait add
 # → Input: [code snippet with security issue]
 # → Output: This endpoint is vulnerable to SQL injection...
 # → Rate: 10
 
 # Collect examples from past PR reviews
 
-ft train && ft eval
+ait train && ait eval
 # → Model learns your team's code review standards
 ```
 
@@ -168,42 +168,42 @@ Fine-tune on internal documentation, technical specs, or research papers.
 
 ```bash
 # Global install
-npm install -g ft-pipeline
+npm install -g aitelier
 
 # Verify installation
-ft --version
+ait --version
 ```
 
 **Option 2: Homebrew (macOS/Linux)**
 
 ```bash
 # Tap the repository
-brew tap furkantanyol/ft-pipeline https://github.com/furkantanyol/ft-pipeline
+brew tap furkantanyol/aitelier https://github.com/furkantanyol/aitelier
 
 # Install
-brew install ft-pipeline
+brew install aitelier
 
 # Verify installation
-ft --version
+ait --version
 ```
 
 **Option 3: npx (no install)**
 
 ```bash
 # Run commands directly without installing
-npx ft-pipeline init
-npx ft-pipeline add
+npx aitelier init
+npx aitelier add
 # ... other commands
 ```
 
 **Option 4: Development install**
 
 ```bash
-git clone https://github.com/furkantanyol/ft-pipeline.git
-cd ft-pipeline
+git clone https://github.com/furkantanyol/aitelier.git
+cd aitelier
 pnpm install
 pnpm turbo build
-pnpm --filter ft-pipeline exec tsx src/index.ts --help
+pnpm --filter aitelier exec tsx src/index.ts --help
 ```
 
 **Requirements:**
@@ -217,59 +217,59 @@ pnpm --filter ft-pipeline exec tsx src/index.ts --help
 
 ```bash
 # Initialize a new fine-tuning project
-ft init
+ait init
 # → What's your project name? my-support-bot
 # → Which provider? Together.ai
 # → Base model? meta-llama/Llama-3.3-70B-Instruct
 # → Created .ftpipeline.json and data/ directory
 
 # Add training examples interactively
-ft add
+ait add
 # → Paste the input (user message): How do I reset my password?
 # → Paste the ideal output (assistant message): You can reset your password at...
 # → Rate this example (1-10, or skip): 9
 # → Saved example #1 to data/examples.jsonl
 
 # Review and rate existing examples
-ft rate
+ait rate
 # → Shows examples one by one with rating prompts
 
 # Check dataset health
-ft stats
+ait stats
 # → 25 total examples (20 rated, 5 unrated)
 # → Rating distribution: ██████░░ 8+ (18) | ███░ 5-7 (2)
 # → Ready for training: Yes
 
 # Create train/validation split
-ft split
+ait split
 # → Split 20 examples: 16 train, 4 val (80/20)
 
 # Export to provider format
-ft format
+ait format
 # → Exported to data/train.jsonl (16 examples)
 # → Exported to data/val.jsonl (4 examples)
 
 # Start fine-tuning job
 export TOGETHER_API_KEY=your_api_key
-ft train
+ait train
 # → Uploading data/train.jsonl...
-# → Job ID: ft-abc123
-# → Run `ft status` to check progress
+# → Job ID: ait-abc123
+# → Run `ait status` to check progress
 
 # Monitor training
-ft status
-# → Job ft-abc123: COMPLETED ✓
+ait status
+# → Job ait-abc123: COMPLETED ✓
 # → Model: username/Llama-3.3-70B-Instruct-my-support-bot-v1
 
 # Evaluate on validation set
-ft eval
+ait eval
 # → Running 4 validation examples...
 # → Results: Avg score 8.5 | Sendable 4/4 (100%)
 ```
 
 ## Project Structure
 
-When you run `ft init`, it creates:
+When you run `ait init`, it creates:
 
 ```
 your-project/
@@ -283,14 +283,14 @@ your-project/
 
 ## Commands
 
-### `ft init`
+### `ait init`
 
 Initialize a new fine-tuning project with interactive prompts.
 
 **Example:**
 
 ```bash
-ft init
+ait init
 # → What's your project name? customer-support-bot
 # → Which provider? Together.ai
 # → Base model? meta-llama/Llama-3.3-70B-Instruct
@@ -303,14 +303,14 @@ Creates `.ftpipeline.json` config and `data/` directory structure.
 
 ---
 
-### `ft add`
+### `ait add`
 
 Add training examples interactively or from files.
 
 **Interactive mode:**
 
 ```bash
-ft add
+ait add
 # → Paste the input (user message): How do I reset my password?
 # → Paste the ideal output: You can reset your password by visiting...
 # → Rate this example (1-10, or skip): 9
@@ -320,20 +320,20 @@ ft add
 **File mode:**
 
 ```bash
-ft add --input user-message.txt --output assistant-response.txt
+ait add --input user-message.txt --output assistant-response.txt
 # → Saved example #1 to data/examples.jsonl
 ```
 
 ---
 
-### `ft rate`
+### `ait rate`
 
 Review and rate examples interactively. Shows unrated examples first, then allows filtering.
 
 **Basic usage:**
 
 ```bash
-ft rate
+ait rate
 # → Example 1/10
 # → Input: How do I reset my password?
 # → Output: You can reset your password by...
@@ -343,7 +343,7 @@ ft rate
 **Review only low-rated examples:**
 
 ```bash
-ft rate --min 8
+ait rate --min 8
 # → Only shows examples rated below 8 for re-review
 ```
 
@@ -356,14 +356,14 @@ ft rate --min 8
 
 ---
 
-### `ft stats`
+### `ait stats`
 
 Show dataset health and statistics.
 
 **Example output:**
 
 ```bash
-ft stats
+ait stats
 # ══════════════════════════════════════════════════════════════════════
 # 📊 Dataset Statistics
 # ══════════════════════════════════════════════════════════════════════
@@ -391,14 +391,14 @@ ft stats
 
 ---
 
-### `ft format`
+### `ait format`
 
 Export rated examples to provider-specific JSONL format for training.
 
 **Usage:**
 
 ```bash
-ft format
+ait format
 # → Filtered 20 examples → 17 above threshold (rating ≥ 8)
 # → Exported 13 examples to data/train.jsonl
 # → Exported 4 examples to data/val.jsonl
@@ -416,14 +416,14 @@ Only exports examples that are:
 
 ---
 
-### `ft split`
+### `ait split`
 
 Create or manage train/validation split with stratification.
 
 **Basic usage:**
 
 ```bash
-ft split
+ait split
 # → Split 20 examples: 16 train, 4 val (80/20 split)
 # → Stratified by rating
 ```
@@ -431,14 +431,14 @@ ft split
 **Custom ratio:**
 
 ```bash
-ft split --ratio 0.9
+ait split --ratio 0.9
 # → Split 20 examples: 18 train, 2 val (90/10 split)
 ```
 
 **Force reshuffle (with confirmation):**
 
 ```bash
-ft split --reshuffle
+ait split --reshuffle
 # → Warning: This will re-assign validation examples to training
 # → Continue? (y/N): y
 ```
@@ -452,7 +452,7 @@ ft split --reshuffle
 
 ---
 
-### `ft train`
+### `ait train`
 
 Start a fine-tuning job on Together.ai with LoRA.
 
@@ -465,18 +465,18 @@ export TOGETHER_API_KEY=your_api_key_here
 **Basic usage:**
 
 ```bash
-ft train
+ait train
 # → Uploading data/train.jsonl...
 # → Starting fine-tune job...
-# → Job ID: ft-abc123xyz
+# → Job ID: ait-abc123xyz
 # → Saved run to .ftpipeline.json
-# → Run `ft status` to check progress
+# → Run `ait status` to check progress
 ```
 
 **Custom hyperparameters:**
 
 ```bash
-ft train --epochs 5 --batch-size 8 --learning-rate 2e-5 --lora-r 32 --lora-alpha 64
+ait train --epochs 5 --batch-size 8 --learning-rate 2e-5 --lora-r 32 --lora-alpha 64
 ```
 
 **Options:**
@@ -490,19 +490,19 @@ ft train --epochs 5 --batch-size 8 --learning-rate 2e-5 --lora-r 32 --lora-alpha
 **Requirements:**
 
 - `TOGETHER_API_KEY` environment variable must be set
-- `data/train.jsonl` must exist (run `ft format` first)
+- `data/train.jsonl` must exist (run `ait format` first)
 
 ---
 
-### `ft status`
+### `ait status`
 
 Monitor fine-tuning job progress.
 
 **Check latest job:**
 
 ```bash
-ft status
-# → Job ft-abc123xyz: RUNNING
+ait status
+# → Job ait-abc123xyz: RUNNING
 # → Started: 2026-02-11 10:30:00
 # → Epochs: 3 | Batch size: 4
 ```
@@ -510,7 +510,7 @@ ft status
 **Show all training runs:**
 
 ```bash
-ft status --all
+ait status --all
 # ══════════════════════════════════════════════════════════════════════
 # 📋 Training Runs
 # ══════════════════════════════════════════════════════════════════════
@@ -534,14 +534,14 @@ ft status --all
 
 ---
 
-### `ft eval`
+### `ait eval`
 
 Evaluate fine-tuned model on validation set with interactive scoring.
 
 **Basic evaluation:**
 
 ```bash
-ft eval
+ait eval
 # → Running fine-tuned model on 4 validation examples...
 # → Model: username/Llama-3.3-70B-my-bot-v1
 #
@@ -576,7 +576,7 @@ ft eval
 **Blind A/B comparison (base model vs fine-tuned):**
 
 ```bash
-ft eval --compare
+ait eval --compare
 # → Running both base and fine-tuned models...
 #
 # ──────────────────────────────────────────────────────────────────────
@@ -658,7 +658,7 @@ ft eval --compare
 5. **Initialize project:**
 
    ```bash
-   ft init
+   ait init
    # → Select "Together.ai" when prompted
    # → Choose base model (e.g., meta-llama/Llama-3.3-70B-Instruct)
    ```
@@ -690,7 +690,7 @@ OpenAI fine-tuning support is planned and straightforward to add (formats are ne
 export OPENAI_API_KEY=your_key
 
 # Initialize with OpenAI
-ft init
+ait init
 # → Select "OpenAI"
 # → Choose base model (e.g., gpt-4o-mini)
 ```
@@ -708,8 +708,8 @@ ft init
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/ft-pipeline.git
-cd ft-pipeline
+git clone https://github.com/yourusername/aitelier.git
+cd aitelier
 
 # Install dependencies
 pnpm install
@@ -722,13 +722,13 @@ pnpm turbo build
 
 ```bash
 # Run CLI locally during development
-pnpm --filter ft-pipeline exec tsx src/index.ts --help
-pnpm --filter ft-pipeline exec tsx src/index.ts init
+pnpm --filter aitelier exec tsx src/index.ts --help
+pnpm --filter aitelier exec tsx src/index.ts init
 
 # Run tests
 pnpm turbo test                                    # All tests
-pnpm --filter ft-pipeline exec vitest             # Watch mode
-pnpm --filter ft-pipeline exec vitest run src/commands/init.test.ts  # Single file
+pnpm --filter aitelier exec vitest             # Watch mode
+pnpm --filter aitelier exec vitest run src/commands/init.test.ts  # Single file
 
 # Lint and format
 pnpm turbo lint
@@ -788,14 +788,14 @@ pnpm turbo build && pnpm prettier --write . && pnpm turbo lint && pnpm turbo tes
 ```mermaid
 graph TB
     subgraph "User Workflow"
-        Init[ft init] --> Add[ft add]
-        Add --> Rate[ft rate]
-        Rate --> Stats[ft stats]
-        Stats --> Split[ft split]
-        Split --> Format[ft format]
-        Format --> Train[ft train]
-        Train --> Status[ft status]
-        Status --> Eval[ft eval]
+        Init[ait init] --> Add[ait add]
+        Add --> Rate[ait rate]
+        Rate --> Stats[ait stats]
+        Stats --> Split[ait split]
+        Split --> Format[ait format]
+        Format --> Train[ait train]
+        Train --> Status[ait status]
+        Status --> Eval[ait eval]
         Eval --> Rate
     end
 
@@ -846,7 +846,7 @@ graph TB
 ### Package Structure
 
 ```
-ft-pipeline/
+aitelier/
 ├── packages/
 │   ├── cli/                    # Core CLI package (ships first)
 │   │   ├── src/
@@ -914,39 +914,39 @@ ft-pipeline/
 
 ### "Project not initialized" error
 
-**Problem:** Command fails with "Project not initialized. Run `ft init` first."
+**Problem:** Command fails with "Project not initialized. Run `ait init` first."
 
-**Solution:** Run `ft init` in your project directory to create `.ftpipeline.json` and `data/` structure.
-
----
-
-### "No rated examples found" when running `ft format`
-
-**Problem:** `ft format` reports no examples meet the quality threshold.
-
-**Solution:**
-
-1. Run `ft stats` to check how many examples are rated
-2. Run `ft rate` to rate unrated examples
-3. Consider lowering quality threshold: `ft format --min-rating 7`
+**Solution:** Run `ait init` in your project directory to create `.ftpipeline.json` and `data/` structure.
 
 ---
 
-### "No validation examples found" when running `ft eval`
+### "No rated examples found" when running `ait format`
 
-**Problem:** `ft eval` reports no validation examples.
+**Problem:** `ait format` reports no examples meet the quality threshold.
 
 **Solution:**
 
-1. Run `ft split` to create train/validation split
+1. Run `ait stats` to check how many examples are rated
+2. Run `ait rate` to rate unrated examples
+3. Consider lowering quality threshold: `ait format --min-rating 7`
+
+---
+
+### "No validation examples found" when running `ait eval`
+
+**Problem:** `ait eval` reports no validation examples.
+
+**Solution:**
+
+1. Run `ait split` to create train/validation split
 2. Ensure you have at least 5 rated examples (20% goes to validation)
-3. Run `ft format` after splitting to export to JSONL files
+3. Run `ait format` after splitting to export to JSONL files
 
 ---
 
 ### "TOGETHER_API_KEY not found" error
 
-**Problem:** `ft train` or `ft eval` fails with API key error.
+**Problem:** `ait train` or `ait eval` fails with API key error.
 
 **Solution:**
 
@@ -976,25 +976,25 @@ source ~/.zshrc
 
 ### Training job stuck or failed
 
-**Problem:** `ft status` shows job stuck in PENDING or FAILED state.
+**Problem:** `ait status` shows job stuck in PENDING or FAILED state.
 
 **Solution:**
 
 1. Check Together.ai dashboard for detailed error messages
 2. Verify training data format: `cat data/train.jsonl | head -n 1`
 3. Ensure training data has at least 10 examples
-4. Try reducing batch size: `ft train --batch-size 2`
+4. Try reducing batch size: `ait train --batch-size 2`
 5. Contact Together.ai support if issue persists
 
 ---
 
 ### Validation set accidentally reshuffled
 
-**Problem:** Validation examples changed after running `ft split`.
+**Problem:** Validation examples changed after running `ait split`.
 
 **Solution:**
 
-- Validation sets are locked by default. Reshuffle only happens with `ft split --reshuffle`.
+- Validation sets are locked by default. Reshuffle only happens with `ait split --reshuffle`.
 - If you need consistent evaluation, avoid using `--reshuffle` between training runs.
 - Check `data/examples.jsonl` for `split` field to see current assignments.
 
@@ -1002,7 +1002,7 @@ source ~/.zshrc
 
 ### Model output truncated during evaluation
 
-**Problem:** Model responses are cut off during `ft eval`.
+**Problem:** Model responses are cut off during `ait eval`.
 
 **Solution:**
 
@@ -1017,7 +1017,7 @@ source ~/.zshrc
 
 ```bash
 # Run command with Node.js debug output
-NODE_DEBUG=* ft train
+NODE_DEBUG=* ait train
 ```
 
 **Check data files:**
@@ -1038,7 +1038,7 @@ ls -lh data/evals/
 - Command you ran
 - Error message (full output)
 - Contents of `.ftpipeline.json` (redact API keys)
-- Output of `ft stats`
+- Output of `ait stats`
 
 ---
 
@@ -1050,8 +1050,8 @@ Contributions welcome! Please open an issue first to discuss major changes.
 
 ```bash
 # Clone and install
-git clone https://github.com/yourusername/ft-pipeline.git
-cd ft-pipeline
+git clone https://github.com/yourusername/aitelier.git
+cd aitelier
 pnpm install
 
 # Run checks before submitting PR

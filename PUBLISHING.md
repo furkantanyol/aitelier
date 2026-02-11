@@ -1,10 +1,10 @@
 # Publishing Guide
 
-This document describes how to publish new releases of ft-pipeline to npm and update the Homebrew formula.
+This document describes how to publish new releases of aitelier to npm and update the Homebrew formula.
 
 ## Prerequisites
 
-1. npm account with publishing access to `ft-pipeline`
+1. npm account with publishing access to `aitelier`
 2. GitHub repository access with push permissions
 3. npm token configured as `NPM_TOKEN` in GitHub Actions secrets
 
@@ -84,12 +84,12 @@ Pushing a tag triggers the GitHub Actions release workflow (`.github/workflows/r
 
 After the workflow completes:
 
-1. Check npm: https://www.npmjs.com/package/ft-pipeline
-2. Check GitHub Releases: https://github.com/furkantanyol/ft-pipeline/releases
+1. Check npm: https://www.npmjs.com/package/aitelier
+2. Check GitHub Releases: https://github.com/furkantanyol/aitelier/releases
 3. Test installation:
 
 ```bash
-npm install -g ft-pipeline@latest
+npm install -g aitelier@latest
 ft --version
 ```
 
@@ -97,7 +97,7 @@ ft --version
 
 ```bash
 brew update
-brew upgrade ft-pipeline
+brew upgrade aitelier
 ft --version
 ```
 
@@ -119,19 +119,19 @@ If the automated formula update fails:
 1. Download the tarball:
 
 ```bash
-wget https://registry.npmjs.org/ft-pipeline/-/ft-pipeline-0.2.0.tgz
+wget https://registry.npmjs.org/aitelier/-/aitelier-0.2.0.tgz
 ```
 
 2. Calculate SHA256:
 
 ```bash
-sha256sum ft-pipeline-0.2.0.tgz
+sha256sum aitelier-0.2.0.tgz
 ```
 
-3. Update `Formula/ft-pipeline.rb`:
+3. Update `Formula/aitelier.rb`:
 
 ```ruby
-url "https://registry.npmjs.org/ft-pipeline/-/ft-pipeline-0.2.0.tgz"
+url "https://registry.npmjs.org/aitelier/-/aitelier-0.2.0.tgz"
 sha256 "abc123..." # Paste the calculated SHA256
 ```
 
@@ -147,7 +147,7 @@ end
 5. Commit and push:
 
 ```bash
-git add Formula/ft-pipeline.rb
+git add Formula/aitelier.rb
 git commit -m "Update Homebrew formula to v0.2.0"
 git push origin main
 ```
@@ -177,7 +177,7 @@ Ensure version is updated in all three places:
 
 ## Versioning Strategy
 
-ft-pipeline follows [Semantic Versioning](https://semver.org/):
+aitelier follows [Semantic Versioning](https://semver.org/):
 
 - **MAJOR** (1.0.0): Breaking changes (e.g., CLI command renames, removed features)
 - **MINOR** (0.2.0): New features (e.g., new commands, provider support)

@@ -1,11 +1,11 @@
 {
-  "name": "ft-pipeline",
+  "name": "aitelier",
   "version": "0.1.0",
-  "description": "CLI for collecting, rating, formatting, and iterating on LLM fine-tuning datasets",
+  "description": "Your AI atelier - craft fine-tuned models with an intuitive CLI for dataset curation and training",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
-    "ft": "./dist/index.js"
+    "ait": "./dist/index.js"
   },
   "files": [
     "dist",
@@ -44,13 +44,13 @@
   "author": "Furkan Tanyol <furkantanyol@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/furkantanyol/ft-pipeline.git",
+    "url": "https://github.com/furkantanyol/aitelier.git",
     "directory": "packages/cli"
   },
   "bugs": {
-    "url": "https://github.com/furkantanyol/ft-pipeline/issues"
+    "url": "https://github.com/furkantanyol/aitelier/issues"
   },
-  "homepage": "https://github.com/furkantanyol/ft-pipeline#readme",
+  "homepage": "https://github.com/furkantanyol/aitelier#readme",
   "license": "MIT",
   "engines": {
     "node": ">=20"

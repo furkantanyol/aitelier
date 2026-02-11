@@ -11,17 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial release of ft-pipeline CLI
-- `ft init` - Interactive project initialization with provider selection
-- `ft add` - Collect training examples interactively or from files
-- `ft rate` - Review and score examples with inline rewriting
-- `ft stats` - View dataset statistics and rating distribution
-- `ft format` - Export examples to provider-specific JSONL format
-- `ft split` - Create train/validation splits with stratification
-- `ft train` - Submit fine-tuning jobs to Together.ai
-- `ft status` - Monitor fine-tuning job progress
-- `ft eval` - Evaluate fine-tuned models on validation set
-- `ft eval --compare` - Blind A/B testing between base and fine-tuned models
+- Initial release of aitelier CLI
+- `ait init` - Interactive project initialization with provider selection
+- `ait add` - Collect training examples interactively or from files
+- `ait rate` - Review and score examples with inline rewriting
+- `ait stats` - View dataset statistics and rating distribution
+- `ait format` - Export examples to provider-specific JSONL format
+- `ait split` - Create train/validation splits with stratification
+- `ait train` - Submit fine-tuning jobs to Together.ai
+- `ait status` - Monitor fine-tuning job progress
+- `ait eval` - Evaluate fine-tuned models on validation set
+- `ait eval --compare` - Blind A/B testing between base and fine-tuned models
 - Together.ai provider integration
 - Local JSONL-based storage system
 - Interactive prompts with Inquirer.js
@@ -38,5 +38,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configurable fine-tuning hyperparameters
 - Interactive CLI with clear formatting
 
-[Unreleased]: https://github.com/furkantanyol/ft-pipeline/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/furkantanyol/ft-pipeline/releases/tag/v0.1.0
+[Unreleased]: https://github.com/furkantanyol/aitelier/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/furkantanyol/aitelier/releases/tag/v0.1.0

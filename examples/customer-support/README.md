@@ -1,6 +1,6 @@
 # Customer Support Bot Example
 
-A complete example project demonstrating how to fine-tune an LLM for customer support using ft-pipeline.
+A complete example project demonstrating how to fine-tune an LLM for customer support using aitelier.
 
 ## Scenario
 
@@ -56,7 +56,7 @@ export TOGETHER_API_KEY="your-api-key-here"
 ### 3. Review the training data
 
 ```bash
-npx ft-pipeline stats
+npx aitelier stats
 ```
 
 You should see:
@@ -69,10 +69,10 @@ You should see:
 
 ```bash
 # Create train/val split (80/20)
-npx ft-pipeline split
+npx aitelier split
 
 # Format for Together.ai
-npx ft-pipeline format
+npx aitelier format
 ```
 
 This creates:
@@ -83,7 +83,7 @@ This creates:
 ### 5. Start fine-tuning
 
 ```bash
-npx ft-pipeline train
+npx aitelier train
 ```
 
 This will:
@@ -96,20 +96,20 @@ This will:
 
 ```bash
 # Check job status
-npx ft-pipeline status
+npx aitelier status
 
 # Once complete, see the model ID
-npx ft-pipeline status --all
+npx aitelier status --all
 ```
 
 ### 7. Evaluate the fine-tuned model
 
 ```bash
 # Interactive evaluation on validation set
-npx ft-pipeline eval
+npx aitelier eval
 
 # Compare base model vs fine-tuned model (blind A/B test)
-npx ft-pipeline eval --compare
+npx aitelier eval --compare
 ```
 
 ## Expected Results
@@ -171,16 +171,16 @@ Delete `data/examples.jsonl` and add your own:
 
 ```bash
 # Add examples interactively
-npx ft-pipeline add
+npx aitelier add
 
 # Or add from files
-npx ft-pipeline add --input user_message.txt --output agent_response.txt
+npx aitelier add --input user_message.txt --output agent_response.txt
 ```
 
 ### 3. Rate your examples
 
 ```bash
-npx ft-pipeline rate
+npx aitelier rate
 ```
 
 Score each example 1-10 based on:
@@ -194,7 +194,7 @@ Score each example 1-10 based on:
 
 After your first fine-tune:
 
-- Run `ft eval --compare` to see what improved
+- Run `ait eval --compare` to see what improved
 - Identify patterns in low-scoring responses
 - Add more examples in those areas
 - Re-rate existing examples if your quality bar changed
@@ -237,16 +237,16 @@ Inference costs after fine-tuning:
 ## Next Steps
 
 1. **Expand the dataset**: Add 50-100 more examples covering edge cases
-2. **Test in production**: Use `ft eval` to catch issues before deployment
+2. **Test in production**: Use `ait eval` to catch issues before deployment
 3. **Iterate**: Add examples for any failure modes you discover
 4. **Monitor quality**: Regularly run evaluations as you add more data
 
 ## Learn More
 
-- **ft-pipeline documentation**: [Main README](../../README.md)
+- **aitelier documentation**: [Main README](../../README.md)
 - **Together.ai fine-tuning guide**: [docs.together.ai/fine-tuning](https://docs.together.ai/docs/fine-tuning)
 - **Provider setup**: [Provider Setup Guide](../../README.md#provider-setup)
 
 ---
 
-**Questions?** Open an issue at [github.com/ftanyol/ft-pipeline](https://github.com/ftanyol/ft-pipeline)
+**Questions?** Open an issue at [github.com/ftanyol/aitelier](https://github.com/ftanyol/aitelier)

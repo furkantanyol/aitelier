@@ -1,4 +1,4 @@
-# TASKS — ft-pipeline
+# TASKS — aitelier
 
 Track progress by checking off tasks as they're completed.
 
@@ -14,33 +14,33 @@ Track progress by checking off tasks as they're completed.
 - [x] Set up CI (GitHub Actions: lint + test)
 - [x] Create initial README with project description
 
-### M1.2 — `ft init` Command
+### M1.2 — `ait init` Command
 
 - [x] Interactive prompts: project name, provider (together/openai), model, system prompt
 - [x] Generate `.ftpipeline.json` config file
 - [x] Create `data/` directory with `examples.jsonl`, `train.jsonl`, `val.jsonl`
 - [x] Write tests for init flow
 
-### M1.3 — `ft add` Command
+### M1.3 — `ait add` Command
 
 - [x] Interactive mode: paste input → paste output → auto-format to chat JSONL
-- [x] File mode: `ft add --input input.txt --output output.txt`
+- [x] File mode: `ait add --input input.txt --output output.txt`
 - [x] Auto-append to `data/examples.jsonl` with metadata (timestamp, rating: null, version)
 - [x] Validate JSON structure on save
 - [ ] Support for multi-turn conversations (array of messages)
 - [x] Write tests
 
-### M1.4 — `ft rate` Command
+### M1.4 — `ait rate` Command
 
 - [x] Show unrated examples one by one (interactive)
 - [x] Display: system prompt + input + output, formatted in terminal
 - [x] Rate 1-10, option to rewrite output inline
 - [x] If rewrite: save rewritten version as training target, keep original as metadata
-- [x] `ft rate --min 8` — only show examples rated below 8 for re-review
+- [x] `ait rate --min 8` — only show examples rated below 8 for re-review
 - [x] Summary stats after session
 - [x] Write tests
 
-### M1.5 — `ft stats` Command
+### M1.5 — `ait stats` Command
 
 - [x] Total examples, rated count, unrated count
 - [x] Rating distribution (histogram in terminal)
@@ -52,7 +52,7 @@ Track progress by checking off tasks as they're completed.
 
 ## Milestone 2: Format, Split, Train
 
-### M2.1 — `ft format` Command
+### M2.1 — `ait format` Command
 
 - [x] Export rated examples (above threshold) to provider-specific JSONL
 - [x] Together.ai format: standard chat messages
@@ -61,16 +61,16 @@ Track progress by checking off tasks as they're completed.
 - [x] Output to `data/train.jsonl` and `data/val.jsonl`
 - [x] Write tests
 
-### M2.2 — `ft split` Command
+### M2.2 — `ait split` Command
 
 - [x] Auto-split: 80/20 train/val by default
 - [x] Stratified by rating if enough examples
-- [x] `ft split --ratio 0.9` for custom splits
+- [x] `ait split --ratio 0.9` for custom splits
 - [x] Lock validation set: once assigned, val examples don't move to train
-- [x] `ft split --reshuffle` to force re-split (with confirmation)
+- [x] `ait split --reshuffle` to force re-split (with confirmation)
 - [x] Write tests
 
-### M2.3 — `ft train` Command
+### M2.3 — `ait train` Command
 
 - [x] Upload training file to Together.ai via API
 - [x] Create LoRA fine-tune job with sensible defaults
@@ -79,11 +79,11 @@ Track progress by checking off tasks as they're completed.
 - [x] Requires `TOGETHER_API_KEY` env var
 - [x] Write tests
 
-### M2.4 — `ft status` Command
+### M2.4 — `ait status` Command
 
 - [x] Check fine-tune job status via provider API
-- [x] `ft status` — show latest job
-- [x] `ft status --all` — show all runs with model IDs
+- [x] `ait status` — show latest job
+- [x] `ait status --all` — show all runs with model IDs
 - [x] When complete: save model ID to config
 - [x] Write tests
 
@@ -91,7 +91,7 @@ Track progress by checking off tasks as they're completed.
 
 ## Milestone 3: Eval
 
-### M3.1 — `ft eval` Command
+### M3.1 — `ait eval` Command
 
 - [x] Run fine-tuned model on all validation examples
 - [x] Side-by-side display: expected output vs model output
@@ -100,7 +100,7 @@ Track progress by checking off tasks as they're completed.
 - [x] Save eval results to `data/evals/eval-{version}-{date}.json`
 - [x] Write tests
 
-### M3.2 — `ft eval --compare` Mode
+### M3.2 — `ait eval --compare` Mode
 
 - [x] Run base model AND fine-tuned model on same inputs
 - [x] Show A vs B (blind, randomized order)

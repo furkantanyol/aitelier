@@ -1,6 +1,6 @@
 # Code Review Assistant Example
 
-A complete example project demonstrating how to fine-tune an LLM for automated code review using ft-pipeline.
+A complete example project demonstrating how to fine-tune an LLM for automated code review using aitelier.
 
 ## Scenario
 
@@ -49,7 +49,7 @@ export TOGETHER_API_KEY=your_api_key_here
 ### 3. Check the dataset
 
 ```bash
-ft stats
+ait stats
 ```
 
 You should see:
@@ -83,7 +83,7 @@ Examples meeting threshold: 5 (100%)
 ### 4. Create train/val split
 
 ```bash
-ft split
+ait split
 ```
 
 With only 5 examples, you'll get:
@@ -95,7 +95,7 @@ Split 5 examples: 4 train, 1 val (80/20)
 ### 5. Format for training
 
 ```bash
-ft format
+ait format
 ```
 
 This exports the split examples to Together.ai format:
@@ -108,7 +108,7 @@ Exported 1 example to data/val.jsonl
 ### 6. Start fine-tuning
 
 ```bash
-ft train --epochs 3
+ait train --epochs 3
 ```
 
 Output:
@@ -121,13 +121,13 @@ Creating fine-tune job... ✓
 Job ID: ft-abc123xyz
 Model will be available as: username/Meta-Llama-3.1-8B-Instruct-Turbo-code-review-assistant-abc123
 
-Run `ft status` to check progress.
+Run `ait status` to check progress.
 ```
 
 ### 7. Monitor training
 
 ```bash
-ft status
+ait status
 ```
 
 ### 8. Evaluate the model
@@ -135,7 +135,7 @@ ft status
 Once training completes:
 
 ```bash
-ft eval
+ait eval
 ```
 
 This will run your fine-tuned model on the validation set and let you score the outputs.
@@ -154,9 +154,9 @@ To make this production-ready:
 1. **Add more examples** (aim for 50-100):
 
    ```bash
-   ft add  # Interactive mode
+   ait add  # Interactive mode
    # Or use file mode:
-   ft add --input code-snippet.txt --output review-feedback.txt
+   ait add --input code-snippet.txt --output review-feedback.txt
    ```
 
 2. **Cover more languages and scenarios**:
@@ -167,13 +167,13 @@ To make this production-ready:
 3. **Rate existing examples**:
 
    ```bash
-   ft rate
+   ait rate
    ```
 
 4. **Iterate on quality**:
    ```bash
-   ft stats  # Check dataset health
-   ft rate --min 8  # Re-review examples below threshold
+   ait stats  # Check dataset health
+   ait rate --min 8  # Re-review examples below threshold
    ```
 
 ## Customization Tips
@@ -193,7 +193,7 @@ Edit `.ftpipeline.json` to customize the reviewer's personality:
 Add language-specific examples to bias the model toward your stack:
 
 ```bash
-ft add  # Add more React/Python/etc. examples
+ait add  # Add more React/Python/etc. examples
 ```
 
 ### Set quality standards
@@ -211,11 +211,11 @@ Adjust the quality threshold in `.ftpipeline.json`:
 1. **Collect real code reviews** from your team's PRs
 2. **Rate and curate** the best examples
 3. **Fine-tune** with 50-100 examples
-4. **Evaluate** using `ft eval --compare` to measure improvement
+4. **Evaluate** using `ait eval --compare` to measure improvement
 5. **Integrate** into your CI/CD pipeline
 
 ## Learn More
 
-- [Main README](../../README.md) - Full ft-pipeline documentation
+- [Main README](../../README.md) - Full aitelier documentation
 - [Customer Support Example](../customer-support/) - Another complete example
 - [Together.ai Docs](https://docs.together.ai/docs/fine-tuning-quickstart) - Fine-tuning guides

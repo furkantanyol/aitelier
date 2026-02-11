@@ -23,12 +23,12 @@ Track progress by checking off tasks as they're completed.
 
 ### M1.3 — `ft add` Command
 
-- [ ] Interactive mode: paste input → paste output → auto-format to chat JSONL
-- [ ] File mode: `ft add --input input.txt --output output.txt`
-- [ ] Auto-append to `data/examples.jsonl` with metadata (timestamp, rating: null, version)
-- [ ] Validate JSON structure on save
+- [x] Interactive mode: paste input → paste output → auto-format to chat JSONL
+- [x] File mode: `ft add --input input.txt --output output.txt`
+- [x] Auto-append to `data/examples.jsonl` with metadata (timestamp, rating: null, version)
+- [x] Validate JSON structure on save
 - [ ] Support for multi-turn conversations (array of messages)
-- [ ] Write tests
+- [x] Write tests
 
 ### M1.4 — `ft rate` Command
 

@@ -1,0 +1,2 @@
+{"id":1,"messages":[{"role":"system","content":"You are a helpful customer support agent."},{"role":"user","content":"How do I reset my password?"},{"role":"assistant","content":"You can reset your password by visiting..."}],"rating":null,"createdAt":"2026-02-11T12:32:23.244Z","version":1}
+{"id":2,"messages":[{"role":"system","content":"You are a helpful customer support agent."},{"role":"user","content":"What is your refund policy?"},{"role":"assistant","content":"We offer full refunds within 30 days..."}],"rating":null,"createdAt":"2026-02-11T12:32:33.367Z","version":1}

@@ -12,6 +12,12 @@
 
 Built for indie hackers and small teams fine-tuning open-source models (Llama, Mistral) via LoRA with 50-500 training examples iterating weekly.
 
+## Demo
+
+[![Made with VHS](https://vhs.charm.sh/vhs-2qrSQ8Phswh8QBaxsdvMKC.gif)](https://vhs.charm.sh)
+
+*Full workflow: `ait init` → `ait add` → `ait rate` → `ait split` → `ait train` → `ait eval`*
+
 ---
 
 ## Table of Contents

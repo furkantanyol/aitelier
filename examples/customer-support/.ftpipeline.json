@@ -1,0 +1,8 @@
+{
+  "name": "customer-support-bot",
+  "provider": "together",
+  "model": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+  "systemPrompt": "You are a helpful customer support agent for TechGadgets, an online electronics store. Be friendly, professional, and solution-oriented. Always verify order details before taking action. Offer clear next steps.",
+  "qualityThreshold": 8,
+  "runs": []
+}

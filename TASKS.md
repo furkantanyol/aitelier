@@ -93,19 +93,19 @@ Track progress by checking off tasks as they're completed.
 
 ### M3.1 — `ft eval` Command
 
-- [ ] Run fine-tuned model on all validation examples
-- [ ] Side-by-side display: expected output vs model output
-- [ ] Interactive scoring per example
-- [ ] Summary: average score, sendable rate
-- [ ] Save eval results to `data/evals/eval-{version}-{date}.json`
-- [ ] Write tests
+- [x] Run fine-tuned model on all validation examples
+- [x] Side-by-side display: expected output vs model output
+- [x] Interactive scoring per example
+- [x] Summary: average score, sendable rate
+- [x] Save eval results to `data/evals/eval-{version}-{date}.json`
+- [x] Write tests
 
 ### M3.2 — `ft eval --compare` Mode
 
-- [ ] Run base model AND fine-tuned model on same inputs
-- [ ] Show A vs B (blind, randomized order)
-- [ ] After scoring: reveal which was which + aggregate stats
-- [ ] Write tests
+- [x] Run base model AND fine-tuned model on same inputs
+- [x] Show A vs B (blind, randomized order)
+- [x] After scoring: reveal which was which + aggregate stats
+- [x] Write tests
 
 ---
 
@@ -113,17 +113,21 @@ Track progress by checking off tasks as they're completed.
 
 ### M4.1 — README.md
 
-- [ ] One-line description + quick start
+- [x] One-line description + quick start
 - [ ] CLI demo GIF/video (asciinema or vhs)
-- [ ] Architecture diagram (mermaid)
-- [ ] Provider setup guides (Together, OpenAI)
-- [ ] Example use cases (customer support, code review)
-- [ ] Contributing guide
+- [x] Architecture diagram (mermaid)
+- [x] Provider setup guides (Together, OpenAI)
+- [x] Example use cases (customer support, code review, domain Q&A)
+- [x] Contributing guide
+- [x] Comprehensive command documentation with examples
+- [x] Troubleshooting section
+- [x] Badges and table of contents
+- [x] Updated features list and roadmap
 
 ### M4.2 — Example Projects
 
-- [ ] `examples/customer-support/` — 20 training examples + walkthrough
-- [ ] `examples/code-review/` — 20 training examples + walkthrough
+- [x] `examples/customer-support/` — 25 training examples + walkthrough
+- [x] `examples/code-review/` — 5 training examples + walkthrough
 
 ### M4.3 — Package Publishing
 

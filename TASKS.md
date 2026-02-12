@@ -177,9 +177,9 @@ Track progress by checking off tasks as they're completed.
 ### W0.3 — Database Schema & Types
 **Deps:** W0.2 · **Size:** M
 
-- [ ] Create SQL migration `supabase/migrations/001_initial_schema.sql` with tables: `projects`, `examples`, `training_runs`, `evaluations`, `project_members`
-- [ ] Add RLS policies (project membership + role-based access: owner/trainer/rater)
-- [ ] Write hand-written TypeScript types in `types.ts` (Row, Insert, Update per table)
+- [x] Create SQL migration `supabase/migrations/001_initial_schema.sql` with tables: `projects`, `examples`, `training_runs`, `evaluations`, `project_members`
+- [x] Add RLS policies (project membership + role-based access: owner/trainer/rater)
+- [x] Auto-generate TypeScript types via `pnpm db:gen-types` (uses `supabase gen types`)
 
 ### W0.4 — Auth: Magic Link Login
 **Deps:** W0.2 · **Size:** M

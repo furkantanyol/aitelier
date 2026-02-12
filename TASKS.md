@@ -184,20 +184,20 @@ Track progress by checking off tasks as they're completed.
 ### W0.4 — Auth: Magic Link Login
 **Deps:** W0.2 · **Size:** M
 
-- [ ] Create Next.js middleware (`src/middleware.ts`) for auth session refresh + redirect to `/login`
-- [ ] Create login page with email input + "Send Magic Link" button (Shadcn Card/Input/Button)
-- [ ] Create `/auth/callback` route to exchange code for session → redirect to `/dashboard`
-- [ ] Server action for `signInWithOtp`
+- [x] Create Next.js middleware (`src/middleware.ts`) for auth session refresh + redirect to `/login`
+- [x] Create login page with email input + "Send Magic Link" button (Shadcn Card/Input/Button)
+- [x] Create `/auth/callback` route to exchange code for session → redirect to `/dashboard`
+- [x] Server action for `signInWithOtp`
 
 ### W0.5 — App Shell & Navigation
 **Deps:** W0.4 · **Size:** M
 
-- [ ] Create `(app)` route group for authenticated pages
-- [ ] Create sidebar with nav links: Dashboard, Rate, Add, Train, Eval, Playground, Settings
-- [ ] Active link highlighting, collapsible on mobile
-- [ ] User menu (email + sign-out)
-- [ ] Dark mode as default
-- [ ] Placeholder dashboard page
+- [x] Create `(app)` route group for authenticated pages
+- [x] Create sidebar with nav links: Dashboard, Rate, Add, Train, Eval, Playground, Settings
+- [x] Active link highlighting, collapsible on mobile
+- [x] User menu (email + sign-out)
+- [x] Dark mode as default
+- [x] Placeholder dashboard page
 
 ---
 

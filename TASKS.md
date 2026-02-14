@@ -222,10 +222,10 @@ Track progress by checking off tasks as they're completed.
 ### W1.3 — Add Examples Page
 **Deps:** W0.5, W0.3 · **Size:** M
 
-- [ ] Manual add tab: input + output textareas, optional rating slider, "Add & Next" flow
-- [ ] Bulk import tab: JSONL file upload + JSON paste with preview
-- [ ] Server actions: `addExample`, `importExamples`
-- [ ] Validation errors for malformed input
+- [x] Manual add tab: input + output textareas, optional rating slider, "Add & Next" flow
+- [x] Bulk import tab: JSONL file upload + JSON paste with preview
+- [x] Server actions: `addExample`, `importExamples`
+- [x] Validation errors for malformed input
 
 ### W1.4 — Rating Interface (Card UI + Rating Controls)
 **Deps:** W0.5, W0.3 · **Size:** L

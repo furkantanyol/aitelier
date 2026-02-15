@@ -222,6 +222,24 @@ pnpm turbo build && pnpm prettier --write . && pnpm turbo lint && pnpm turbo tes
 - Redirects to `/train/[runId]` on successful launch
 - Created basic `/train/[runId]` page with status display
 - Status badges: pending, uploading, queued, training, completed, failed, cancelled
+
+### Task W4.1: Eval Setup Page (Web)
+
+- Created `/eval` page route at `app/(app)/eval/page.tsx`
+- Created `getEvalSetupData()` server action in `eval/actions.ts`
+- Returns model options (baseline + completed training runs), val example count, base model, system prompt
+- Model options include type (baseline/fine-tuned), label with version numbers (descending)
+- Created `startEvaluation()` server action to generate outputs for both models
+- Uses Together.ai chat completions API: POST to `/v1/chat/completions` with model ID and messages
+- Generates outputs for all validation examples (model A and model B)
+- Inserts evaluation records with model_output/baseline_output based on which model is fine-tuned
+- Created `EvalSetup` client component with model selectors (Select dropdowns)
+- Auto-selects first fine-tuned model as Model A if available, baseline as Model B
+- Validation set info card shows count with CheckCircle2 icon
+- Warning if no fine-tuned models or no validation examples
+- "Start Evaluation" button disabled until valid selection (two different models, val set exists)
+- Loading state while generating outputs, then redirects to `/eval/[evaluationId]` (comparison UI)
+- Installed Shadcn alert component with `pnpm dlx shadcn@latest add alert`
 - Shows run details: base model, train/val counts, job ID, model ID, error if any
 
 ### Task W2.1: Dashboard Key Metrics Cards (Web)

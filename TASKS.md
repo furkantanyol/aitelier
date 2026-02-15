@@ -346,9 +346,9 @@ Track progress by checking off tasks as they're completed.
 
 **Deps:** W0.5, W0.3 · **Size:** S
 
-- [ ] Model A / Model B dropdowns (completed runs + baseline)
-- [ ] Auto-select val set with count display
-- [ ] "Start Evaluation" → generate outputs for both models → redirect to comparison UI
+- [x] Model A / Model B dropdowns (completed runs + baseline)
+- [x] Auto-select val set with count display
+- [x] "Start Evaluation" → generate outputs for both models → redirect to comparison UI
 
 ### W4.2 — Eval: Blind Comparison UI
 

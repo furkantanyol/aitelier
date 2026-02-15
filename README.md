@@ -6,6 +6,8 @@
 
 > Your AI atelier — craft fine-tuned models with CLI + web app
 
+**[aitelier.sh](https://aitelier.sh)** · **[Web App](https://app.aitelier.sh)**
+
 [![npm version](https://img.shields.io/npm/v/aitelier.svg)](https://www.npmjs.com/package/aitelier)
 [![CI](https://github.com/furkantanyol/aitelier/actions/workflows/ci.yml/badge.svg)](https://github.com/furkantanyol/aitelier/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -20,20 +22,23 @@ A complete toolkit for the full lifecycle of fine-tuning LLMs — from collectin
 **Two ways to work:**
 
 - **CLI** (`ait`) — Fast, local, git-friendly. JSONL files as the database. Perfect for solo work.
-- **Web app** — Polished UI with Supabase backend. Project sharing, team roles, visual dashboards. Perfect for collaborative curation.
+- **[Web app](https://app.aitelier.sh)** — Polished UI with Supabase backend. Project sharing, team roles, visual dashboards. Perfect for collaborative curation.
 
 ## Packages
 
-| Package | Description | Docs |
-| --- | --- | --- |
-| [`packages/cli`](packages/cli) | CLI tool — `npx aitelier` | [CLI Quick Start](#cli-quick-start) |
-| [`packages/web`](packages/web) | Next.js web app | [Web README](packages/web/README.md) |
+| Package                                | Description                                                  | Docs                                 |
+| -------------------------------------- | ------------------------------------------------------------ | ------------------------------------ |
+| [`packages/cli`](packages/cli)         | CLI tool — `npx aitelier`                                    | [CLI Quick Start](#cli-quick-start)  |
+| [`packages/web`](packages/web)         | Next.js web app — [app.aitelier.sh](https://app.aitelier.sh) | [Web README](packages/web/README.md) |
+| [`packages/landing`](packages/landing) | Landing page — [aitelier.sh](https://aitelier.sh)            | Static HTML                          |
 
 ## CLI Quick Start
 
 ```bash
 # Install
 npm install -g aitelier
+# or
+brew install aitelier
 
 # Initialize project
 ait init
@@ -233,6 +238,6 @@ MIT © [Furkan Tanyol](https://github.com/furkantanyol)
 
 <div align="center">
 
-**[Web App Docs](packages/web/README.md)** · **[CLI Examples](examples/)** · **[Issues](https://github.com/furkantanyol/aitelier/issues)** · **[npm](https://www.npmjs.com/package/aitelier)**
+**[Website](https://aitelier.sh)** · **[Web App](https://app.aitelier.sh)** · **[CLI Examples](examples/)** · **[Issues](https://github.com/furkantanyol/aitelier/issues)** · **[npm](https://www.npmjs.com/package/aitelier)**
 
 </div>

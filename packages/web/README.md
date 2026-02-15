@@ -1,6 +1,6 @@
 # aitelier web
 
-> Polished web app for collaborative LLM fine-tuning dataset curation
+> Polished web app for collaborative LLM fine-tuning dataset curation — **[app.aitelier.sh](https://app.aitelier.sh)**
 
 The web app is the team-facing side of aitelier. Non-technical collaborators can contribute training data, rate examples, monitor training runs, and evaluate models — all from a clean, dark-mode UI.
 
@@ -107,20 +107,20 @@ pnpm --filter web db:gen-types
 
 ## Pages
 
-| Route | Page | Description |
-| --- | --- | --- |
-| `/login` | Login | Magic link email authentication |
-| `/setup` | Project Setup | 6-step wizard (name, provider, model, prompt, config, team) |
-| `/dashboard` | Dashboard | Metrics cards, rating chart, training timeline, activity feed |
-| `/add` | Add Examples | Manual input or bulk JSONL import |
-| `/rate` | Rate | Card-based rating with keyboard shortcuts and rewrite flow |
-| `/train` | Training | Pre-flight checks, split management, config editor, run history |
-| `/train/[runId]` | Run Status | Live training status with polling |
-| `/eval` | Evaluation | A/B comparison setup |
-| `/eval/[id]` | Blind Comparison | Side-by-side blind rating interface |
-| `/eval/[id]/results` | Results | Win/loss reveal, per-example breakdown, historical trends |
-| `/playground` | Playground | Single model chat + side-by-side comparison with streaming |
-| `/settings` | Settings | Project config, provider, training defaults, team, export, delete |
+| Route                | Page             | Description                                                       |
+| -------------------- | ---------------- | ----------------------------------------------------------------- |
+| `/login`             | Login            | Magic link email authentication                                   |
+| `/setup`             | Project Setup    | 6-step wizard (name, provider, model, prompt, config, team)       |
+| `/dashboard`         | Dashboard        | Metrics cards, rating chart, training timeline, activity feed     |
+| `/add`               | Add Examples     | Manual input or bulk JSONL import                                 |
+| `/rate`              | Rate             | Card-based rating with keyboard shortcuts and rewrite flow        |
+| `/train`             | Training         | Pre-flight checks, split management, config editor, run history   |
+| `/train/[runId]`     | Run Status       | Live training status with polling                                 |
+| `/eval`              | Evaluation       | A/B comparison setup                                              |
+| `/eval/[id]`         | Blind Comparison | Side-by-side blind rating interface                               |
+| `/eval/[id]/results` | Results          | Win/loss reveal, per-example breakdown, historical trends         |
+| `/playground`        | Playground       | Single model chat + side-by-side comparison with streaming        |
+| `/settings`          | Settings         | Project config, provider, training defaults, team, export, delete |
 
 ## Architecture
 
@@ -204,13 +204,13 @@ Magic link email → Supabase sends OTP → user clicks link → `/auth/callback
 
 Five core tables with Row Level Security:
 
-| Table | Purpose | Key Columns |
-| --- | --- | --- |
-| `projects` | Workspace config | name, system_prompt, provider, base_model, provider_config, training_config |
-| `project_members` | Team access | project_id, user_id, role (owner/trainer/rater) |
-| `examples` | Training data | input, output, rewrite, rating, split (train/val), rated_by |
-| `training_runs` | Fine-tuning jobs | provider_job_id, model_id, status, config, cost |
-| `evaluations` | A/B comparison results | model_output, baseline_output, preferred, scores |
+| Table             | Purpose                | Key Columns                                                                 |
+| ----------------- | ---------------------- | --------------------------------------------------------------------------- |
+| `projects`        | Workspace config       | name, system_prompt, provider, base_model, provider_config, training_config |
+| `project_members` | Team access            | project_id, user_id, role (owner/trainer/rater)                             |
+| `examples`        | Training data          | input, output, rewrite, rating, split (train/val), rated_by                 |
+| `training_runs`   | Fine-tuning jobs       | provider_job_id, model_id, status, config, cost                             |
+| `evaluations`     | A/B comparison results | model_output, baseline_output, preferred, scores                            |
 
 ### RLS Roles
 
@@ -220,12 +220,12 @@ Five core tables with Row Level Security:
 
 ## Environment Variables
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Yes | Supabase anon/publishable key |
-| `SUPABASE_SECRET_KEY` | For invites | Service role key (enables team invites) |
-| `SUPABASE_PROJECT_ID` | For types | Used by `db:gen-types` script |
+| Variable                               | Required    | Description                             |
+| -------------------------------------- | ----------- | --------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Yes         | Supabase project URL                    |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Yes         | Supabase anon/publishable key           |
+| `SUPABASE_SECRET_KEY`                  | For invites | Service role key (enables team invites) |
+| `SUPABASE_PROJECT_ID`                  | For types   | Used by `db:gen-types` script           |
 
 The Together.ai API key is stored per-project in the database (encrypted in `provider_config`), not as an environment variable. Users enter it during project setup or in Settings.
 
@@ -241,9 +241,9 @@ Installed components live in `src/components/ui/`. Don't pre-install everything.
 
 ## Deployment
 
-The web app is a standard Next.js app. Deploy to any platform that supports Next.js:
+The web app is deployed at **[app.aitelier.sh](https://app.aitelier.sh)** on Vercel. It's a standard Next.js app compatible with any platform that supports Next.js:
 
-- **Vercel** (recommended) — zero config, auto-deploys from GitHub
+- **Vercel** (current) — zero config, auto-deploys from GitHub
 - **Railway**, **Fly.io**, **AWS Amplify** — set environment variables and deploy
 
 Make sure to:

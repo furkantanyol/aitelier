@@ -1,8 +1,0 @@
-{
-  "name": "my-bot",
-  "provider": "openai",
-  "model": "gpt-4o-mini-2024-07-18",
-  "systemPrompt": "You are a helpful assistant.",
-  "qualityThreshold": 8,
-  "runs": []
-}

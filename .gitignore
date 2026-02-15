@@ -8,3 +8,11 @@ dist/
 !.env.example
 
 .DS_Store
+.claude/
+
+# Local aitelier project (testing)
+data/
+.aitelier.json
+
+# Supabase CLI
+supabase/.temp/

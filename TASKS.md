@@ -364,11 +364,11 @@ Track progress by checking off tasks as they're completed.
 
 **Deps:** W4.2 · **Size:** M
 
-- [ ] Reveal animation showing model identities
-- [ ] Win/loss/tie bar (green/red/gray)
-- [ ] Per-example expandable breakdown
-- [ ] Verdict text ("SHIP IT" / "need more data")
-- [ ] Historical trends line chart (ShadCDN Charts)
+- [x] Reveal animation showing model identities
+- [x] Win/loss/tie bar (green/red/gray)
+- [x] Per-example expandable breakdown
+- [x] Verdict text ("SHIP IT" / "need more data")
+- [x] Historical trends line chart (ShadCDN Charts)
 
 ---
 

@@ -264,6 +264,29 @@ pnpm turbo build && pnpm prettier --write . && pnpm turbo lint && pnpm turbo tes
 - Uses existing slider and badge components
 - TypeScript: Cast Supabase `preferred` field from `string | null` to union type `'model' | 'baseline' | 'tie' | null`
 
+### Task W4.3: Eval Results Reveal + Historical Trends (Web)
+
+- Created `/eval/[evaluationId]/results` page route with Suspense wrapper
+- Created `getEvaluationResults()` server action to aggregate evaluation stats
+- Returns: model ID, base model, total evals, model/baseline/tie wins, avg scores, and detailed items
+- Created `getHistoricalEvalTrends()` server action for cross-version comparison
+- Loops through all completed training runs and aggregates win rate, avg scores per version
+- Created `ResultsReveal` client component with Framer Motion reveal animation
+- Initial state shows "Reveal Model Identities" button, animates to full results on click
+- Model identity cards show fine-tuned model ID and baseline model side-by-side
+- Win/loss/tie progress bars with color coding: green (model wins), red (baseline wins), gray (ties)
+- Shows percentages and counts for each outcome type
+- Average score display for both models (1-10 scale) if scores were provided
+- Verdict logic: "SHIP IT" (60%+ win rate), "PROMISING" (45-60%), "NEED MORE DATA" (<45%)
+- Verdict card with icon (Trophy/TrendingUp/AlertTriangle) and description
+- Historical trends line chart using Shadcn Charts (recharts) with three lines: win rate %, model score, baseline score
+- Per-example breakdown using Shadcn Collapsible component
+- Each collapsible row shows: example number, truncated input, preference icon, scores
+- Expanded view shows full input, both outputs side-by-side, and scores if provided
+- Preference indicators on output cards (CheckCircle2 for winner, XCircle for loser)
+- Collapsible component was already installed (checked with ls)
+- All components use consistent design system: zinc/slate tones, generous spacing, subtle shadows
+
 ### Task W2.1: Dashboard Key Metrics Cards (Web)
 
 - Created `getDashboardMetrics()` server action in `/dashboard/actions.ts`

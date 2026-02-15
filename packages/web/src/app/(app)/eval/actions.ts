@@ -402,3 +402,208 @@ export async function saveEvaluationScore(
 
   return { success: true };
 }
+
+export type EvaluationResultItem = {
+  id: string;
+  input: string;
+  model_output: string;
+  baseline_output: string;
+  preferred: 'model' | 'baseline' | 'tie' | null;
+  model_score: number | null;
+  baseline_score: number | null;
+};
+
+export type EvaluationResults = {
+  trainingRunId: string;
+  modelId: string;
+  baseModel: string;
+  totalEvaluations: number;
+  modelWins: number;
+  baselineWins: number;
+  ties: number;
+  avgModelScore: number | null;
+  avgBaselineScore: number | null;
+  items: EvaluationResultItem[];
+};
+
+/**
+ * Get evaluation results with aggregated stats
+ */
+export async function getEvaluationResults(trainingRunId: string): Promise<{
+  data: EvaluationResults | null;
+  error?: string;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { data: null, error: 'Not authenticated' };
+  }
+
+  // Get training run details
+  const { data: trainingRun, error: runError } = await supabase
+    .from('training_runs')
+    .select('model_id, base_model')
+    .eq('id', trainingRunId)
+    .single();
+
+  if (runError || !trainingRun) {
+    return { data: null, error: 'Training run not found' };
+  }
+
+  // Get all evaluation records
+  const { data: evals, error: evalsError } = await supabase
+    .from('evaluations')
+    .select('id, example_id, model_output, baseline_output, preferred, model_score, baseline_score')
+    .eq('training_run_id', trainingRunId)
+    .order('created_at', { ascending: true });
+
+  if (evalsError || !evals) {
+    return { data: null, error: 'Failed to load evaluation results' };
+  }
+
+  // Get example inputs
+  const exampleIds = evals.map((e) => e.example_id);
+  const { data: examples, error: examplesError } = await supabase
+    .from('examples')
+    .select('id, input')
+    .in('id', exampleIds);
+
+  if (examplesError || !examples) {
+    return { data: null, error: 'Failed to load example inputs' };
+  }
+
+  const exampleMap = new Map(examples.map((e) => [e.id, e.input]));
+
+  // Build result items
+  const items: EvaluationResultItem[] = evals.map((evalRecord) => {
+    const preferred = evalRecord.preferred as 'model' | 'baseline' | 'tie' | null;
+
+    return {
+      id: evalRecord.id,
+      input: exampleMap.get(evalRecord.example_id) ?? '',
+      model_output: evalRecord.model_output ?? '',
+      baseline_output: evalRecord.baseline_output ?? '',
+      preferred,
+      model_score: evalRecord.model_score,
+      baseline_score: evalRecord.baseline_score,
+    };
+  });
+
+  // Calculate aggregated stats
+  const totalEvaluations = items.length;
+  const modelWins = items.filter((item) => item.preferred === 'model').length;
+  const baselineWins = items.filter((item) => item.preferred === 'baseline').length;
+  const ties = items.filter((item) => item.preferred === 'tie').length;
+
+  // Calculate average scores (only for scored items)
+  const scoredItems = items.filter(
+    (item) => item.model_score !== null && item.baseline_score !== null,
+  );
+  const avgModelScore =
+    scoredItems.length > 0
+      ? scoredItems.reduce((sum, item) => sum + (item.model_score ?? 0), 0) / scoredItems.length
+      : null;
+  const avgBaselineScore =
+    scoredItems.length > 0
+      ? scoredItems.reduce((sum, item) => sum + (item.baseline_score ?? 0), 0) / scoredItems.length
+      : null;
+
+  return {
+    data: {
+      trainingRunId,
+      modelId: trainingRun.model_id ?? '',
+      baseModel: trainingRun.base_model,
+      totalEvaluations,
+      modelWins,
+      baselineWins,
+      ties,
+      avgModelScore,
+      avgBaselineScore,
+      items,
+    },
+  };
+}
+
+export type HistoricalEvalTrend = {
+  version: number;
+  modelWinRate: number;
+  avgModelScore: number | null;
+  avgBaselineScore: number | null;
+  createdAt: string;
+};
+
+/**
+ * Get historical evaluation trends for a project
+ */
+export async function getHistoricalEvalTrends(projectId: string): Promise<{
+  data: HistoricalEvalTrend[] | null;
+  error?: string;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { data: null, error: 'Not authenticated' };
+  }
+
+  // Get all completed training runs with evaluations
+  const { data: runs, error: runsError } = await supabase
+    .from('training_runs')
+    .select('id, created_at')
+    .eq('project_id', projectId)
+    .eq('status', 'completed')
+    .not('model_id', 'is', null)
+    .order('created_at', { ascending: true });
+
+  if (runsError || !runs) {
+    return { data: null, error: 'Failed to load training runs' };
+  }
+
+  // For each run, get evaluation stats
+  const trends: HistoricalEvalTrend[] = [];
+
+  for (let i = 0; i < runs.length; i++) {
+    const run = runs[i];
+    const version = i + 1;
+
+    // Get evaluations for this run
+    const { data: evals } = await supabase
+      .from('evaluations')
+      .select('preferred, model_score, baseline_score')
+      .eq('training_run_id', run.id);
+
+    if (!evals || evals.length === 0) {
+      continue; // Skip runs without evaluations
+    }
+
+    const totalEvals = evals.length;
+    const modelWins = evals.filter((e) => e.preferred === 'model').length;
+    const modelWinRate = (modelWins / totalEvals) * 100;
+
+    // Calculate average scores
+    const scoredItems = evals.filter((e) => e.model_score !== null && e.baseline_score !== null);
+    const avgModelScore =
+      scoredItems.length > 0
+        ? scoredItems.reduce((sum, e) => sum + (e.model_score ?? 0), 0) / scoredItems.length
+        : null;
+    const avgBaselineScore =
+      scoredItems.length > 0
+        ? scoredItems.reduce((sum, e) => sum + (e.baseline_score ?? 0), 0) / scoredItems.length
+        : null;
+
+    trends.push({
+      version,
+      modelWinRate,
+      avgModelScore,
+      avgBaselineScore,
+      createdAt: run.created_at,
+    });
+  }
+
+  return { data: trends };
+}

@@ -259,9 +259,9 @@ Track progress by checking off tasks as they're completed.
 
 **Deps:** W1.4 · **Size:** S
 
-- [ ] Filter dropdown: Unrated (default), All, Below threshold, Needs rewrite
-- [ ] Sort dropdown: Newest (default), Random, By rating
-- [ ] Filters modify Supabase query, persist in session
+- [x] Filter dropdown: Unrated (default), All, Below threshold, Needs rewrite
+- [x] Sort dropdown: Newest (default), Random, By rating
+- [x] Filters modify Supabase query, persist in session
 
 ---
 

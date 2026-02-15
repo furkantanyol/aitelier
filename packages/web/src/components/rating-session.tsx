@@ -11,6 +11,7 @@ type Example = {
   input: string;
   output: string;
   rating: number | null;
+  rewrite: string | null;
   created_at: string;
 };
 

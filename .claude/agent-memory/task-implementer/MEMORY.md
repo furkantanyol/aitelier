@@ -100,7 +100,29 @@ pnpm turbo build && pnpm prettier --write . && pnpm turbo lint && pnpm turbo tes
 - Number keys: `e.key >= '1' && e.key <= '9'` for 1-9, special case for 0 = 10
 - Common shortcuts: `r` for action, `s` for skip, `Escape` to cancel, arrow keys for navigation
 
+### URL Search Params for Filters/Sorting
+
+- Use Next.js `searchParams` in page.tsx (async prop)
+- Parse params with defaults: `const filter = (params.filter ?? 'unrated') as FilterType`
+- Pass filter/sort to server action for Supabase query
+- Client component uses `useRouter()` and `useSearchParams()` to update URL
+- Update URL with `router.push(\`/path?${params.toString()}\`)`
+- Include filter/sort in Suspense key to trigger re-fetch: `key={\`${projectId}-${filter}-${sort}\`}`
+- Define filter/sort types in actions.ts and export for type safety
+
 ## Completed Tasks
+
+### Task W1.6: Rating Filters & Sorting (Web)
+
+- Implemented filter dropdown: Unrated (default), All, Below threshold, Needs rewrite
+- Implemented sort dropdown: Newest, Oldest, Random, Rating (low to high), Rating (high to low)
+- Created `RatingControls` client component with shadcn Select components
+- Extended server action `getExamples()` to accept filter and sort parameters
+- Filter logic: unrated checks null rating, below-threshold uses project's quality_threshold
+- Sort logic: newest/oldest use created_at, rating sorts use rating field, random sorts client-side
+- URL search params persist filter/sort state across navigation
+- Suspense key includes filter/sort to trigger re-fetch on change
+- Type-safe filter and sort enums exported from actions.ts
 
 ### Task W1.5: Rating Rewrite Flow + Keyboard Shortcuts (Web)
 

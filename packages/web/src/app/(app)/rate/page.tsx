@@ -1,11 +1,20 @@
 import { Suspense } from 'react';
 import { cookies } from 'next/headers';
-import { getUnratedExamples } from './actions';
+import { getExamples, type FilterType, type SortType } from './actions';
 import { RatingSession } from '@/components/rating-session';
+import { RatingControls } from '@/components/rating-controls';
 import { Card, CardContent } from '@/components/ui/card';
 import { getUserProjects } from '@/lib/projects';
 
-export default async function RatePage() {
+type PageProps = {
+  searchParams: Promise<{
+    filter?: string;
+    sort?: string;
+  }>;
+};
+
+export default async function RatePage({ searchParams }: PageProps) {
+  const params = await searchParams;
   const cookieStore = await cookies();
   let activeProjectId = cookieStore.get('active_project')?.value ?? null;
 
@@ -15,8 +24,12 @@ export default async function RatePage() {
     activeProjectId = projects[0]?.id ?? null;
   }
 
+  // Parse search params
+  const filter = (params.filter ?? 'unrated') as FilterType;
+  const sort = (params.sort ?? 'newest') as SortType;
+
   const initialExamplesPromise = activeProjectId
-    ? getUnratedExamples(activeProjectId)
+    ? getExamples(activeProjectId, filter, sort)
     : Promise.resolve({ examples: [] });
 
   return (
@@ -27,6 +40,9 @@ export default async function RatePage() {
           Review and rate training examples to build a quality dataset.
         </p>
       </div>
+
+      <RatingControls filter={filter} sort={sort} />
+
       <Suspense
         fallback={
           <Card>
@@ -36,7 +52,10 @@ export default async function RatePage() {
           </Card>
         }
       >
-        <RatingSession key={activeProjectId} initialExamplesPromise={initialExamplesPromise} />
+        <RatingSession
+          key={`${activeProjectId}-${filter}-${sort}`}
+          initialExamplesPromise={initialExamplesPromise}
+        />
       </Suspense>
     </div>
   );

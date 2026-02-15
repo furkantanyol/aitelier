@@ -400,12 +400,12 @@ Track progress by checking off tasks as they're completed.
 
 **Deps:** W0.5, W0.3 · **Size:** M
 
-- [ ] Project settings: name, description
-- [ ] Provider config: API key, model, "Test Connection"
-- [ ] Training defaults: epochs, batch, lr, LoRA params
-- [ ] Team management: list members, invite, change role, remove
-- [ ] Export: "Download Dataset as JSONL"
-- [ ] Danger zone: "Delete Project" with double confirmation
+- [x] Project settings: name, description
+- [x] Provider config: API key, model, "Test Connection"
+- [x] Training defaults: epochs, batch, lr, LoRA params
+- [x] Team management: list members, invite, change role, remove
+- [x] Export: "Download Dataset as JSONL"
+- [x] Danger zone: "Delete Project" with double confirmation
 
 ---
 
@@ -433,9 +433,9 @@ Track progress by checking off tasks as they're completed.
 
 **Deps:** W0.5 · **Size:** S
 
-- [ ] Reusable `EmptyState` component (icon, title, description, action button)
-- [ ] Empty states for all pages guiding to the correct next action
-- [ ] "What's next?" contextual suggestion on dashboard based on project state
+- [x] Reusable `EmptyState` component (icon, title, description, action button)
+- [x] Empty states for all pages guiding to the correct next action
+- [x] "What's next?" contextual suggestion on dashboard based on project state
 
 ---
 

@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/supabase/server';
 
 export async function addExample(
   projectId: string,
@@ -9,14 +9,7 @@ export async function addExample(
   output: string,
   rating?: number,
 ) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   const { error } = await supabase.from('examples').insert({
     project_id: projectId,
@@ -43,14 +36,7 @@ type BulkExample = {
 };
 
 export async function importExamples(projectId: string, examples: BulkExample[]) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   const rows = examples.map((ex) => ({
     project_id: projectId,

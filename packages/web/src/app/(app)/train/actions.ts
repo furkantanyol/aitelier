@@ -1,6 +1,7 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/supabase/server';
+import { revalidatePath } from 'next/cache';
 
 export type TrainingConfig = {
   epochs: number;
@@ -34,14 +35,7 @@ export async function getPreflightData(projectId: string): Promise<{
   data: PreflightData | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { data: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get project details
   const { data: project, error: projectError } = await supabase
@@ -144,14 +138,7 @@ export async function updateTrainingConfig(
   projectId: string,
   config: TrainingConfig,
 ): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   const { error } = await supabase
     .from('projects')
@@ -162,6 +149,8 @@ export async function updateTrainingConfig(
     return { success: false, error: error.message };
   }
 
+  revalidatePath('/train');
+  revalidatePath('/settings');
   return { success: true };
 }
 
@@ -196,14 +185,7 @@ export async function getSplitData(projectId: string): Promise<{
   data: SplitData | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { data: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get project to check if val is locked
   const { data: project, error: projectError } = await supabase
@@ -261,14 +243,7 @@ export async function autoSplit(
   projectId: string,
   ratio: number = 0.8,
 ): Promise<{ success: boolean; error?: string; trainCount?: number; valCount?: number }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   // Get project to check if val is locked
   const { data: project, error: projectError } = await supabase
@@ -354,6 +329,8 @@ export async function autoSplit(
     }
   }
 
+  revalidatePath('/train');
+  revalidatePath('/dashboard');
   return {
     success: true,
     trainCount: trainIds.length,
@@ -365,14 +342,7 @@ export async function unlockValidationSet(projectId: string): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   // Clear all val assignments (set to null)
   const { error } = await supabase
@@ -385,6 +355,8 @@ export async function unlockValidationSet(projectId: string): Promise<{
     return { success: false, error: error.message };
   }
 
+  revalidatePath('/train');
+  revalidatePath('/dashboard');
   return { success: true };
 }
 
@@ -393,14 +365,7 @@ export async function moveExamplesToSplit(
   exampleIds: string[],
   targetSplit: 'train' | 'val' | null,
 ): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   if (exampleIds.length === 0) {
     return { success: true };
@@ -416,6 +381,8 @@ export async function moveExamplesToSplit(
     return { success: false, error: error.message };
   }
 
+  revalidatePath('/train');
+  revalidatePath('/dashboard');
   return { success: true };
 }
 
@@ -424,14 +391,7 @@ export async function startTraining(projectId: string): Promise<{
   runId?: string;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   // Get project details
   const { data: project, error: projectError } = await supabase
@@ -550,11 +510,11 @@ export async function startTraining(projectId: string): Promise<{
       })
       .eq('id', run.id);
 
+    revalidatePath('/train');
+    revalidatePath('/dashboard');
     return { success: true, runId: run.id };
   } catch (err) {
-    // Update run status to failed
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-
     return { success: false, error: errorMessage };
   }
 }
@@ -569,14 +529,7 @@ export async function pollTrainingStatus(runId: string): Promise<{
   };
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   // Get training run
   const { data: run, error: runError } = await supabase
@@ -667,6 +620,12 @@ export async function pollTrainingStatus(runId: string): Promise<{
     // Update run in DB
     await supabase.from('training_runs').update(updateData).eq('id', run.id);
 
+    // Revalidate when run reaches terminal state
+    if (newStatus === 'completed' || newStatus === 'failed' || newStatus === 'cancelled') {
+      revalidatePath('/train');
+      revalidatePath('/dashboard');
+    }
+
     return {
       success: true,
       run: {
@@ -686,14 +645,7 @@ export async function cancelTraining(runId: string): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   // Get training run
   const { data: run, error: runError } = await supabase
@@ -721,6 +673,8 @@ export async function cancelTraining(runId: string): Promise<{
       })
       .eq('id', run.id);
 
+    revalidatePath('/train');
+    revalidatePath('/dashboard');
     return { success: true };
   }
 
@@ -756,6 +710,8 @@ export async function cancelTraining(runId: string): Promise<{
       })
       .eq('id', run.id);
 
+    revalidatePath('/train');
+    revalidatePath('/dashboard');
     return { success: true };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
@@ -781,14 +737,7 @@ export async function getAllTrainingRuns(projectId: string): Promise<{
   data: TrainingRunRow[] | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { data: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get all training runs for the project
   const { data: runs, error: runsError } = await supabase

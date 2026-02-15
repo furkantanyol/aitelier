@@ -27,3 +27,20 @@ export async function createClient() {
     },
   );
 }
+
+/**
+ * Create a Supabase client and verify the user is authenticated.
+ * Returns both the client and the user, or throws so callers can handle early returns.
+ */
+export async function getAuthUser() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('Not authenticated');
+  }
+
+  return { supabase, user };
+}

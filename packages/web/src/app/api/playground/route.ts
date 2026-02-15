@@ -1,18 +1,10 @@
 import { NextRequest } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-
-const TOGETHER_API_BASE = 'https://api.together.xyz/v1';
+import { getAuthUser } from '@/lib/supabase/server';
+import { TOGETHER_API_BASE } from '@/lib/providers/together';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return new Response('Unauthorized', { status: 401 });
-    }
+    const { supabase } = await getAuthUser();
 
     const body = await request.json();
     const { projectId, model, messages, temperature, maxTokens } = body;

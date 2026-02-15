@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/supabase/server';
 
 export type ModelOption = {
   id: string;
@@ -16,14 +16,7 @@ export async function getAvailableModels(projectId: string): Promise<{
   models: ModelOption[] | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { models: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get project base model
   const { data: project, error: projectError } = await supabase
@@ -77,14 +70,7 @@ export async function getSystemPrompt(projectId: string): Promise<{
   systemPrompt: string | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { systemPrompt: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   const { data: project, error: projectError } = await supabase
     .from('projects')
@@ -110,14 +96,7 @@ export async function saveAsExample(
   success?: boolean;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   const { error } = await supabase.from('examples').insert({
     project_id: projectId,

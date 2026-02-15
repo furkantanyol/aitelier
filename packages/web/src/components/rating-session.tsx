@@ -4,7 +4,9 @@ import { use, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { RatingCard } from '@/components/rating-card';
+import { EmptyState } from '@/components/empty-state';
 import { useProject } from '@/components/project-provider';
+import { Plus, CheckCircle2 } from 'lucide-react';
 
 type Example = {
   id: string;
@@ -83,21 +85,27 @@ export function RatingSession({ initialExamplesPromise }: Props) {
       {/* Card or empty state */}
       <AnimatePresence mode="wait">
         {!current ? (
-          <Card>
-            <CardContent className="py-16 text-center">
-              <p className="text-lg font-medium">All caught up!</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {total === 0
-                  ? 'No unrated examples. Add some first.'
-                  : `You've reviewed all ${total} examples.`}
-              </p>
-              {rated > 0 && (
-                <p className="mt-3 text-sm text-muted-foreground">
-                  Session: {rated} rated, avg {(ratingSum / rated).toFixed(1)}
-                </p>
-              )}
-            </CardContent>
-          </Card>
+          total === 0 ? (
+            <EmptyState
+              icon={Plus}
+              title="No examples to rate"
+              description="Add training examples first, then come back to rate them. You can add examples manually or import them from JSONL."
+              action={{
+                label: 'Add Examples',
+                href: '/add',
+              }}
+            />
+          ) : (
+            <EmptyState
+              icon={CheckCircle2}
+              title="All caught up!"
+              description={`You've reviewed all ${total} examples.${rated > 0 ? ` This session: ${rated} rated, avg ${(ratingSum / rated).toFixed(1)}.` : ''}`}
+              action={{
+                label: 'Add More Examples',
+                href: '/add',
+              }}
+            />
+          )
         ) : (
           <RatingCard example={current} onRated={handleRated} />
         )}

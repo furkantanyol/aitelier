@@ -130,6 +130,17 @@ pnpm turbo build && pnpm prettier --write . && pnpm turbo lint && pnpm turbo tes
 
 ## Completed Tasks
 
+### Task W7.3: Empty States & Onboarding (Web)
+
+- Created reusable `EmptyState` component in `/packages/web/src/components/empty-state.tsx`
+- Component accepts icon, title, description, and optional action button (href + label)
+- Created `WhatsNext` component in `/packages/web/src/components/whats-next.tsx`
+- WhatsNext provides contextual suggestions based on project state (no examples → add, no ratings → rate, not enough quality → add more, no split → split, ready to train → train, has models → evaluate)
+- Integrated WhatsNext into dashboard alongside ReadinessIndicator
+- Updated rating session to use EmptyState for "no examples" and "all caught up" states
+- Training timeline and activity feed already had appropriate empty states
+- ESLint: Use `&apos;` to escape apostrophes in JSX text to avoid react/no-unescaped-entities errors
+
 ### Task W6.1: Settings Page (Web)
 
 - Created `/settings` page with comprehensive project configuration

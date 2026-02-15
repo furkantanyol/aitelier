@@ -5,6 +5,7 @@ import { RatingDistributionChart } from '@/components/rating-distribution-chart'
 import { ReadinessIndicator } from '@/components/readiness-indicator';
 import { TrainingTimeline } from '@/components/training-timeline';
 import { ActivityFeed } from '@/components/activity-feed';
+import { WhatsNext } from '@/components/whats-next';
 import {
   getDashboardMetrics,
   getRatingDistribution,
@@ -101,11 +102,21 @@ async function DashboardCharts({ projectId }: { projectId: string }) {
           splitStats={distributionResult.splitStats}
         />
       </div>
-      <div>
+      <div className="space-y-6">
         <ReadinessIndicator
           qualityCount={metricsResult.metrics.qualityCount}
           trainCount={distributionResult.splitStats.trainCount}
           valCount={distributionResult.splitStats.valCount}
+        />
+        <WhatsNext
+          state={{
+            totalExamples: metricsResult.metrics.totalExamples,
+            ratedCount: metricsResult.metrics.ratedCount,
+            qualityCount: metricsResult.metrics.qualityCount,
+            trainCount: distributionResult.splitStats.trainCount,
+            valCount: distributionResult.splitStats.valCount,
+            modelsTrainedCount: metricsResult.metrics.modelsTrainedCount,
+          }}
         />
       </div>
     </div>

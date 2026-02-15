@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/supabase/server';
 import { TrainingStatusMonitor } from '@/components/training-status-monitor';
 
 type Props = {
@@ -7,14 +7,7 @@ type Props = {
 };
 
 async function getTrainingRun(runId: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return null;
-  }
+  const { supabase } = await getAuthUser();
 
   const { data, error } = await supabase
     .from('training_runs')

@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/supabase/server';
 
 export type DashboardMetrics = {
   totalExamples: number;
@@ -26,14 +26,7 @@ export async function getDashboardMetrics(projectId: string): Promise<{
   metrics: DashboardMetrics | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { metrics: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get project quality threshold
   const { data: project } = await supabase
@@ -90,14 +83,7 @@ export async function getRatingDistribution(projectId: string): Promise<{
   splitStats: SplitStats | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { distribution: null, splitStats: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get all examples with ratings
   const { data: examples, error: examplesError } = await supabase
@@ -182,14 +168,7 @@ export async function getTrainingRuns(projectId: string): Promise<{
   runs: TrainingRun[] | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { runs: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   const { data: runs, error: runsError } = await supabase
     .from('training_runs')
@@ -220,14 +199,7 @@ export async function getRecentActivity(projectId: string): Promise<{
   activities: ActivityEvent[] | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { activities: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get recent examples (created and rated)
   const { data: examples } = await supabase

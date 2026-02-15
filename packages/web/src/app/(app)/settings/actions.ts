@@ -1,24 +1,23 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
+import {
+  validateApiKey,
+  fetchModels,
+  type TogetherModel,
+} from '@/lib/providers/together';
 
-const TOGETHER_API_BASE = 'https://api.together.xyz/v1';
+// Re-export provider functions so existing imports from settings/actions still work
+export { validateApiKey, fetchModels, type TogetherModel };
 
 // =============================================================================
 // PROJECT SETTINGS
 // =============================================================================
 
 export async function getProjectSettings(projectId: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { project: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   const { data: project, error } = await supabase
     .from('projects')
@@ -36,14 +35,7 @@ export async function getProjectSettings(projectId: string) {
 }
 
 export async function updateProjectBasics(projectId: string, name: string, description: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   const { error } = await supabase
     .from('projects')
@@ -66,76 +58,8 @@ export async function updateProjectBasics(projectId: string, name: string, descr
 // PROVIDER CONFIG
 // =============================================================================
 
-export async function validateApiKey(apiKey: string) {
-  try {
-    const response = await fetch(`${TOGETHER_API_BASE}/models`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
-
-    if (!response.ok) {
-      return { valid: false, error: 'Invalid API key' };
-    }
-
-    return { valid: true };
-  } catch {
-    return { valid: false, error: 'Failed to connect to Together.ai' };
-  }
-}
-
-export type TogetherModel = {
-  id: string;
-  display_name: string;
-  context_length: number;
-};
-
-const RECOMMENDED_MODELS = [
-  'meta-llama/Llama-3.3-70B-Instruct-Turbo',
-  'meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo',
-  'mistralai/Mistral-7B-Instruct-v0.3',
-];
-
-export async function fetchModels(apiKey: string) {
-  try {
-    const response = await fetch(`${TOGETHER_API_BASE}/models`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
-
-    if (!response.ok) {
-      return { models: [], error: 'Failed to fetch models' };
-    }
-
-    const data = (await response.json()) as TogetherModel[];
-
-    // Filter to chat/instruct models and sort recommended first
-    const chatModels = data
-      .filter((m) => m.id.includes('Instruct') || m.id.includes('chat') || m.id.includes('Chat'))
-      .map((m) => ({
-        id: m.id,
-        display_name: m.display_name || m.id.split('/').pop() || m.id,
-        context_length: m.context_length,
-        recommended: RECOMMENDED_MODELS.includes(m.id),
-      }))
-      .sort((a, b) => {
-        if (a.recommended && !b.recommended) return -1;
-        if (!a.recommended && b.recommended) return 1;
-        return a.display_name.localeCompare(b.display_name);
-      });
-
-    return { models: chatModels };
-  } catch {
-    return { models: [], error: 'Failed to connect to Together.ai' };
-  }
-}
-
 export async function updateProviderConfig(projectId: string, apiKey: string, model: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   const { error } = await supabase
     .from('projects')
@@ -169,14 +93,7 @@ export async function updateTrainingDefaults(
     lora_dropout: number;
   },
 ) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   const { error } = await supabase
     .from('projects')
@@ -206,14 +123,7 @@ export type TeamMember = {
 };
 
 export async function getTeamMembers(projectId: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { members: [], error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   // Join project_members with auth.users to get email addresses
   const { data, error } = await supabase
@@ -264,14 +174,7 @@ export async function inviteTeamMember(
   email: string,
   role: 'trainer' | 'rater',
 ) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  await getAuthUser(); // Verify caller is authenticated
 
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return { error: 'Invites require SUPABASE_SECRET_KEY to be configured' };
@@ -303,14 +206,7 @@ export async function updateMemberRole(
   userId: string,
   role: 'trainer' | 'rater',
 ) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   const { error } = await supabase
     .from('project_members')
@@ -327,14 +223,7 @@ export async function updateMemberRole(
 }
 
 export async function removeMember(projectId: string, userId: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   const { error } = await supabase
     .from('project_members')
@@ -355,14 +244,7 @@ export async function removeMember(projectId: string, userId: string) {
 // =============================================================================
 
 export async function exportDataset(projectId: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { jsonl: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Fetch all examples for this project
   const { data: examples, error } = await supabase
@@ -396,14 +278,7 @@ export async function exportDataset(projectId: string) {
 // =============================================================================
 
 export async function deleteProject(projectId: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   const { error } = await supabase.from('projects').delete().eq('id', projectId);
 

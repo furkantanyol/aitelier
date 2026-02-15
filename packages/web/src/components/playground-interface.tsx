@@ -238,13 +238,11 @@ export function PlaygroundInterface({ projectId, models, systemPrompt }: Props) 
 
   // Cancel on unmount
   useEffect(() => {
+    const controllerA = abortControllerRef.current;
+    const controllerB = abortControllerBRef.current;
     return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      if (abortControllerBRef.current) {
-        abortControllerBRef.current.abort();
-      }
+      controllerA?.abort();
+      controllerB?.abort();
     };
   }, []);
 

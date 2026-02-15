@@ -1,6 +1,72 @@
 // Together.ai provider integration for web app
 
-const TOGETHER_API_BASE = 'https://api.together.xyz/v1';
+export const TOGETHER_API_BASE = 'https://api.together.xyz/v1';
+
+export type TogetherModel = {
+  id: string;
+  display_name: string;
+  context_length: number;
+};
+
+const RECOMMENDED_MODELS = [
+  'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+  'meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo',
+  'mistralai/Mistral-7B-Instruct-v0.3',
+];
+
+/**
+ * Validate a Together.ai API key by hitting the models endpoint.
+ */
+export async function validateApiKey(apiKey: string) {
+  try {
+    const response = await fetch(`${TOGETHER_API_BASE}/models`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+
+    if (!response.ok) {
+      return { valid: false, error: 'Invalid API key' };
+    }
+
+    return { valid: true };
+  } catch {
+    return { valid: false, error: 'Failed to connect to Together.ai' };
+  }
+}
+
+/**
+ * Fetch available chat/instruct models from Together.ai, sorted with recommended first.
+ */
+export async function fetchModels(apiKey: string) {
+  try {
+    const response = await fetch(`${TOGETHER_API_BASE}/models`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+
+    if (!response.ok) {
+      return { models: [], error: 'Failed to fetch models' };
+    }
+
+    const data = (await response.json()) as TogetherModel[];
+
+    const chatModels = data
+      .filter((m) => m.id.includes('Instruct') || m.id.includes('chat') || m.id.includes('Chat'))
+      .map((m) => ({
+        id: m.id,
+        display_name: m.display_name || m.id.split('/').pop() || m.id,
+        context_length: m.context_length,
+        recommended: RECOMMENDED_MODELS.includes(m.id),
+      }))
+      .sort((a, b) => {
+        if (a.recommended && !b.recommended) return -1;
+        if (!a.recommended && b.recommended) return 1;
+        return a.display_name.localeCompare(b.display_name);
+      });
+
+    return { models: chatModels };
+  } catch {
+    return { models: [], error: 'Failed to connect to Together.ai' };
+  }
+}
 
 export type Message = {
   role: 'system' | 'user' | 'assistant';

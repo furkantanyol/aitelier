@@ -1,16 +1,9 @@
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/supabase/server';
 
 export type Project = { id: string; name: string };
 
 export async function getUserProjects(): Promise<Project[]> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return [];
-  }
+  const { supabase } = await getAuthUser();
 
   const { data } = await supabase
     .from('projects')

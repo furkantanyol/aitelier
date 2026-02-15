@@ -1,7 +1,8 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { TOGETHER_API_BASE } from '@/lib/providers/together';
 
 export type ModelOption = {
   id: string;
@@ -24,14 +25,7 @@ export async function getEvalSetupData(projectId: string): Promise<{
   data: EvalSetupData | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { data: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get project details
   const { data: project, error: projectError } = await supabase
@@ -113,14 +107,7 @@ export async function startEvaluation(
   evaluationId?: string;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   // Get project details and provider config
   const { data: project, error: projectError } = await supabase
@@ -234,7 +221,7 @@ async function generateCompletion(
   messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
   apiKey: string,
 ): Promise<string> {
-  const response = await fetch('https://api.together.xyz/v1/chat/completions', {
+  const response = await fetch(`${TOGETHER_API_BASE}/chat/completions`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -279,14 +266,7 @@ export async function getEvaluationItems(trainingRunId: string): Promise<{
   data: EvaluationItem[] | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { data: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get all evaluation records with example inputs
   const { data: evals, error: evalsError } = await supabase
@@ -353,14 +333,7 @@ export async function saveEvaluationScore(
   success: boolean;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   // Convert A/B preference to model/baseline preference
   let modelPreferred: 'model' | 'baseline' | 'tie';
@@ -400,6 +373,7 @@ export async function saveEvaluationScore(
     return { success: false, error: error.message };
   }
 
+  revalidatePath('/eval');
   return { success: true };
 }
 
@@ -433,14 +407,7 @@ export async function getEvaluationResults(trainingRunId: string): Promise<{
   data: EvaluationResults | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { data: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get training run details
   const { data: trainingRun, error: runError } = await supabase
@@ -542,14 +509,7 @@ export async function getHistoricalEvalTrends(projectId: string): Promise<{
   data: HistoricalEvalTrend[] | null;
   error?: string;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { data: null, error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get all completed training runs with evaluations
   const { data: runs, error: runsError } = await supabase

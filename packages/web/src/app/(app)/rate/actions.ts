@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/supabase/server';
 
 export type FilterType = 'unrated' | 'all' | 'below-threshold' | 'needs-rewrite';
 export type SortType = 'newest' | 'oldest' | 'random' | 'rating-asc' | 'rating-desc';
@@ -11,14 +11,7 @@ export async function getExamples(
   filter: FilterType = 'unrated',
   sort: SortType = 'newest',
 ) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { examples: [], error: 'Not authenticated' };
-  }
+  const { supabase } = await getAuthUser();
 
   // Get project quality threshold
   const { data: project } = await supabase
@@ -79,14 +72,7 @@ export async function getUnratedExamples(projectId: string) {
 }
 
 export async function rateExample(exampleId: string, rating: number, rewrite?: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { error: 'Not authenticated' };
-  }
+  const { supabase, user } = await getAuthUser();
 
   const updateData: {
     rating: number;

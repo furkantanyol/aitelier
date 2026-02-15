@@ -259,3 +259,146 @@ async function generateCompletion(
 
   return data.choices[0]?.message?.content ?? '';
 }
+
+export type EvaluationItem = {
+  id: string;
+  example_id: string;
+  input: string;
+  output_a: string;
+  output_b: string;
+  is_a_model: boolean; // true if A is model, false if A is baseline
+  preferred: 'model' | 'baseline' | 'tie' | null;
+  model_score: number | null;
+  baseline_score: number | null;
+};
+
+/**
+ * Get all evaluation items for a training run
+ */
+export async function getEvaluationItems(trainingRunId: string): Promise<{
+  data: EvaluationItem[] | null;
+  error?: string;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { data: null, error: 'Not authenticated' };
+  }
+
+  // Get all evaluation records with example inputs
+  const { data: evals, error: evalsError } = await supabase
+    .from('evaluations')
+    .select('id, example_id, model_output, baseline_output, preferred, model_score, baseline_score')
+    .eq('training_run_id', trainingRunId)
+    .order('created_at', { ascending: true });
+
+  if (evalsError || !evals) {
+    return { data: null, error: 'Failed to load evaluation items' };
+  }
+
+  // Get example inputs
+  const exampleIds = evals.map((e) => e.example_id);
+  const { data: examples, error: examplesError } = await supabase
+    .from('examples')
+    .select('id, input')
+    .in('id', exampleIds);
+
+  if (examplesError || !examples) {
+    return { data: null, error: 'Failed to load example inputs' };
+  }
+
+  // Build a map for quick lookup
+  const exampleMap = new Map(examples.map((e) => [e.id, e.input]));
+
+  // Create evaluation items with random A/B assignment
+  const items: EvaluationItem[] = evals.map((evalRecord) => {
+    const input = exampleMap.get(evalRecord.example_id) ?? '';
+
+    // Use evaluation ID to deterministically randomize A/B assignment
+    // This ensures the same example always gets the same assignment across page refreshes
+    const isAModel = evalRecord.id.charCodeAt(0) % 2 === 0;
+
+    // Cast preferred to proper type (Supabase returns string | null)
+    const preferred = evalRecord.preferred as 'model' | 'baseline' | 'tie' | null;
+
+    return {
+      id: evalRecord.id,
+      example_id: evalRecord.example_id,
+      input,
+      output_a: isAModel ? (evalRecord.model_output ?? '') : (evalRecord.baseline_output ?? ''),
+      output_b: isAModel ? (evalRecord.baseline_output ?? '') : (evalRecord.model_output ?? ''),
+      is_a_model: isAModel,
+      preferred,
+      model_score: evalRecord.model_score,
+      baseline_score: evalRecord.baseline_score,
+    };
+  });
+
+  return { data: items };
+}
+
+/**
+ * Save evaluation scores for a single item
+ */
+export async function saveEvaluationScore(
+  evaluationId: string,
+  isAModel: boolean,
+  preferred: 'a' | 'b' | 'tie',
+  scoreA?: number,
+  scoreB?: number,
+): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  // Convert A/B preference to model/baseline preference
+  let modelPreferred: 'model' | 'baseline' | 'tie';
+  if (preferred === 'tie') {
+    modelPreferred = 'tie';
+  } else if (preferred === 'a') {
+    modelPreferred = isAModel ? 'model' : 'baseline';
+  } else {
+    modelPreferred = isAModel ? 'baseline' : 'model';
+  }
+
+  // Convert A/B scores to model/baseline scores
+  const modelScore = isAModel ? scoreA : scoreB;
+  const baselineScore = isAModel ? scoreB : scoreA;
+
+  // Build update object conditionally to handle optional scores
+  const updateData: {
+    preferred: 'model' | 'baseline' | 'tie';
+    scored_by: string;
+    model_score?: number;
+    baseline_score?: number;
+  } = {
+    preferred: modelPreferred,
+    scored_by: user.id,
+  };
+
+  if (modelScore !== undefined) {
+    updateData.model_score = modelScore;
+  }
+  if (baselineScore !== undefined) {
+    updateData.baseline_score = baselineScore;
+  }
+
+  const { error } = await supabase.from('evaluations').update(updateData).eq('id', evaluationId);
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}

@@ -242,6 +242,28 @@ pnpm turbo build && pnpm prettier --write . && pnpm turbo lint && pnpm turbo tes
 - Installed Shadcn alert component with `pnpm dlx shadcn@latest add alert`
 - Shows run details: base model, train/val counts, job ID, model ID, error if any
 
+### Task W4.2: Eval Blind Comparison UI (Web)
+
+- Created dynamic route at `/eval/[evaluationId]/page.tsx` with Suspense wrapper
+- Created `getEvaluationItems()` server action to fetch all evaluation records for a training run
+- Joins evaluation records with example inputs to get full context
+- Deterministic A/B randomization using evaluation ID (charCodeAt % 2) - same assignment across page refreshes
+- Returns `EvaluationItem[]` with `is_a_model` flag to track which side is the fine-tuned model
+- Created `saveEvaluationScore()` server action to update preference and optional scores
+- Converts A/B preference to model/baseline preference based on `is_a_model` flag
+- Handles optional scores conditionally - only updates if provided
+- Created `ComparisonInterface` client component with full-screen layout
+- Header shows progress bar, scored count, and current item number
+- Input context card at top, two response cards (A and B) side-by-side below
+- Each response card has optional 1-10 slider for detailed scoring (defaults to 5 if not set)
+- Three preference buttons: "A is better", "Tie", "B is better"
+- Keyboard shortcuts: A, T, B (case insensitive, skips if typing in input/textarea)
+- After scoring, auto-advances to next unscored item or redirects to results when all scored
+- Initial index computed from first unscored item (avoids setState in useEffect ESLint error)
+- Installed Shadcn progress component with `pnpm dlx shadcn@latest add progress`
+- Uses existing slider and badge components
+- TypeScript: Cast Supabase `preferred` field from `string | null` to union type `'model' | 'baseline' | 'tie' | null`
+
 ### Task W2.1: Dashboard Key Metrics Cards (Web)
 
 - Created `getDashboardMetrics()` server action in `/dashboard/actions.ts`

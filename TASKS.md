@@ -354,11 +354,11 @@ Track progress by checking off tasks as they're completed.
 
 **Deps:** W4.1 · **Size:** L
 
-- [ ] Full-screen layout: input context + two response cards side-by-side
-- [ ] Random A/B assignment (stored, not re-randomized)
-- [ ] Preference buttons: "A is better" / "Tie" / "B is better" + optional 1-10 scores
-- [ ] Keyboard shortcuts: `a`, `t`, `b`
-- [ ] Progress indicator, save to `evaluations` table
+- [x] Full-screen layout: input context + two response cards side-by-side
+- [x] Random A/B assignment (stored, not re-randomized)
+- [x] Preference buttons: "A is better" / "Tie" / "B is better" + optional 1-10 scores
+- [x] Keyboard shortcuts: `a`, `t`, `b`
+- [x] Progress indicator, save to `evaluations` table
 
 ### W4.3 — Eval: Results Reveal + Historical Trends
 

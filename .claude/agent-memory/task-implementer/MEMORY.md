@@ -130,6 +130,21 @@ pnpm turbo build && pnpm prettier --write . && pnpm turbo lint && pnpm turbo tes
 
 ## Completed Tasks
 
+### Task W6.1: Settings Page (Web)
+
+- Created `/settings` page with comprehensive project configuration
+- Server actions in `settings/actions.ts`: `getProjectSettings()`, `updateProjectBasics()`, `updateProviderConfig()`, `updateTrainingDefaults()`, `getTeamMembers()`, `inviteTeamMember()`, `updateMemberRole()`, `removeMember()`, `exportDataset()`, `deleteProject()`
+- Created `SettingsContent` component with six sections: Project Basics, Provider Config, Training Defaults, Team Management, Export, Danger Zone
+- Project Basics: edit name and system prompt (reused from setup wizard)
+- Provider Config: API key management, "Test Connection" validation, model selector (reuses `validateApiKey()` and `fetchModels()` from setup actions)
+- Training Defaults: epochs, batch size, learning rate, LoRA params with collapsible advanced section
+- Team Management: list members with email (fetched via admin client from auth.users), invite new members via email, change roles (dropdown for trainer/rater), remove members (with confirmation dialog)
+- Export: "Download Dataset as JSONL" button creates client-side download via Blob API
+- Danger Zone: "Delete Project" with double confirmation (requires typing project name)
+- Uses Shadcn Alert Dialog for confirmations (install with `pnpm dlx shadcn@latest add alert-dialog --yes --overwrite`)
+- ESLint compliance: avoid calling setState in useEffect body - define async function inside useEffect, call it immediately (React hooks/set-state-in-effect rule)
+- Admin client pattern: use `createAdminClient()` to fetch user emails and send invites via `auth.admin.inviteUserByEmail()`
+
 ### Task W5.2: Playground Side-by-Side Comparison (Web)
 
 - Extended `PlaygroundInterface` component with compare mode toggle

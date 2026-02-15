@@ -418,6 +418,7 @@ Track progress by checking off tasks as they're completed.
 - [ ] Full mobile-responsive rating interface (full-width cards, stacked buttons, 44px tap targets)
 - [ ] Swipe gestures: right = good (8), left = bad (3) with tilt + color overlay
 - [ ] Polish card transition animations
+- [ ] Light/dark theme and switch in settings
 
 ### W7.2 — Real-time Collaboration
 

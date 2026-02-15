@@ -279,16 +279,16 @@ Track progress by checking off tasks as they're completed.
 
 **Deps:** W2.1 · **Size:** M
 
-- [ ] Use ShadCDN Charts, create rating histogram (1-10, color-coded)
-- [ ] Train/val split stacked bar
-- [ ] Readiness indicator ("Ready to train" / "Need X more quality examples")
+- [x] Use ShadCDN Charts, create rating histogram (1-10, color-coded)
+- [x] Train/val split stacked bar
+- [x] Readiness indicator ("Ready to train" / "Need X more quality examples")
 
 ### W2.3 — Dashboard: Training Timeline + Activity Feed
 
 **Deps:** W2.1 · **Size:** M
 
-- [ ] Training timeline: horizontal visual of runs (version, count, status badge, clickable)
-- [ ] Activity feed: last 20 items with relative timestamps
+- [x] Training timeline: horizontal visual of runs (version, count, status badge, clickable)
+- [x] Activity feed: last 20 items with relative timestamps
 - [ ] Team leaderboard (if multi-user)
 
 ---

@@ -1,9 +1,19 @@
 import { Suspense } from 'react';
 import { cookies } from 'next/headers';
 import { MetricCard, MetricCardSkeleton } from '@/components/metric-card';
-import { getDashboardMetrics } from './actions';
+import { RatingDistributionChart } from '@/components/rating-distribution-chart';
+import { ReadinessIndicator } from '@/components/readiness-indicator';
+import { TrainingTimeline } from '@/components/training-timeline';
+import { ActivityFeed } from '@/components/activity-feed';
+import {
+  getDashboardMetrics,
+  getRatingDistribution,
+  getTrainingRuns,
+  getRecentActivity,
+} from './actions';
 import { Database, BarChart3, CheckCircle2, Sparkles } from 'lucide-react';
 import { getUserProjects } from '@/lib/projects';
+import { Skeleton } from '@/components/ui/skeleton';
 
 async function DashboardMetrics({ projectId }: { projectId: string }) {
   const { metrics, error } = await getDashboardMetrics(projectId);
@@ -57,6 +67,103 @@ function MetricsSkeleton() {
   );
 }
 
+async function DashboardCharts({ projectId }: { projectId: string }) {
+  const [metricsResult, distributionResult] = await Promise.all([
+    getDashboardMetrics(projectId),
+    getRatingDistribution(projectId),
+  ]);
+
+  if (metricsResult.error || !metricsResult.metrics) {
+    return (
+      <div className="text-sm text-destructive">
+        Failed to load metrics: {metricsResult.error ?? 'Unknown error'}
+      </div>
+    );
+  }
+
+  if (
+    distributionResult.error ||
+    !distributionResult.distribution ||
+    !distributionResult.splitStats
+  ) {
+    return (
+      <div className="text-sm text-destructive">
+        Failed to load distribution: {distributionResult.error ?? 'Unknown error'}
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-3">
+      <div className="lg:col-span-2">
+        <RatingDistributionChart
+          distribution={distributionResult.distribution}
+          splitStats={distributionResult.splitStats}
+        />
+      </div>
+      <div>
+        <ReadinessIndicator
+          qualityCount={metricsResult.metrics.qualityCount}
+          trainCount={distributionResult.splitStats.trainCount}
+          valCount={distributionResult.splitStats.valCount}
+        />
+      </div>
+    </div>
+  );
+}
+
+function ChartsSkeleton() {
+  return (
+    <div className="grid gap-6 lg:grid-cols-3">
+      <div className="lg:col-span-2">
+        <Skeleton className="h-[400px] w-full" />
+      </div>
+      <div>
+        <Skeleton className="h-[150px] w-full" />
+      </div>
+    </div>
+  );
+}
+
+async function DashboardActivity({ projectId }: { projectId: string }) {
+  const [runsResult, activityResult] = await Promise.all([
+    getTrainingRuns(projectId),
+    getRecentActivity(projectId),
+  ]);
+
+  if (runsResult.error || !runsResult.runs) {
+    return (
+      <div className="text-sm text-destructive">
+        Failed to load training runs: {runsResult.error ?? 'Unknown error'}
+      </div>
+    );
+  }
+
+  if (activityResult.error || !activityResult.activities) {
+    return (
+      <div className="text-sm text-destructive">
+        Failed to load activity: {activityResult.error ?? 'Unknown error'}
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-2">
+      <TrainingTimeline runs={runsResult.runs} />
+      <ActivityFeed activities={activityResult.activities} />
+    </div>
+  );
+}
+
+function ActivitySkeleton() {
+  return (
+    <div className="grid gap-6 lg:grid-cols-2">
+      <Skeleton className="h-[400px] w-full" />
+      <Skeleton className="h-[400px] w-full" />
+    </div>
+  );
+}
+
 export default async function DashboardPage() {
   const cookieStore = await cookies();
   let activeProjectId = cookieStore.get('active_project')?.value ?? null;
@@ -85,6 +192,14 @@ export default async function DashboardPage() {
 
       <Suspense fallback={<MetricsSkeleton />}>
         <DashboardMetrics projectId={activeProjectId} />
+      </Suspense>
+
+      <Suspense fallback={<ChartsSkeleton />}>
+        <DashboardCharts projectId={activeProjectId} />
+      </Suspense>
+
+      <Suspense fallback={<ActivitySkeleton />}>
+        <DashboardActivity projectId={activeProjectId} />
       </Suspense>
     </div>
   );

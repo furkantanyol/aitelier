@@ -110,7 +110,45 @@ pnpm turbo build && pnpm prettier --write . && pnpm turbo lint && pnpm turbo tes
 - Include filter/sort in Suspense key to trigger re-fetch: `key={\`${projectId}-${filter}-${sort}\`}`
 - Define filter/sort types in actions.ts and export for type safety
 
+### Shadcn Charts Integration
+
+- Install charts with `pnpm dlx shadcn@latest add chart` (will also install recharts dependency)
+- Use `ChartContainer`, `ChartConfig`, `ChartTooltip`, `ChartLegend` from `@/components/ui/chart`
+- Bar charts use `BarChart`, `Bar`, `CartesianGrid`, `XAxis`, `YAxis` from recharts
+- Define color scheme in `chartConfig` with CSS variables like `hsl(var(--chart-1))`
+- Chart components are client-side (`"use client"`)
+
 ## Completed Tasks
+
+### Task W2.3: Dashboard Training Timeline + Activity Feed (Web)
+
+- Created `getTrainingRuns()` server action in dashboard actions.ts
+- Returns last 10 training runs with status, example count, model ID, timestamps, errors
+- Created `getRecentActivity()` server action for activity feed
+- Aggregates events from examples (created, rated) and training runs (started, completed)
+- Sorts by timestamp descending, returns last 20 events
+- Created `TrainingTimeline` component with horizontal run cards
+- Status badges with color coding: pending, uploading, queued, training, completed, failed, cancelled
+- Animated spinner for active runs (training, uploading)
+- Shows run number, example count, relative date, model ID (if completed)
+- Created `ActivityFeed` component with icon-coded events
+- Event types: example_added (Plus), example_rated (Star), training_started (Zap), training_completed (CheckCircle2)
+- Relative timestamps: "just now", "5m ago", "2h ago", "3d ago", "1w ago"
+- Empty states for both components with helpful messaging
+- Integrated into dashboard with Suspense and skeleton loading states
+- Two-column grid layout on desktop for timeline + activity feed
+- TypeScript type casting needed for Supabase status field (returns generic string, not union type)
+- Note: Team leaderboard deferred for later multi-user work
+
+### Task W2.2: Dashboard Rating Distribution Chart (Web)
+
+- Created `getRatingDistribution()` server action in dashboard actions.ts
+- Returns rating distribution (1-10 with train/val counts) and split stats (train/val/unassigned counts)
+- Created `RatingDistributionChart` component using Shadcn Charts with stacked bar chart
+- Created `ReadinessIndicator` component with three states: ready (20+ quality, 10+ train, 2+ val), almost ready, not ready
+- Used color-coded cards with CheckCircle2/AlertCircle/XCircle icons
+- Integrated into dashboard with Suspense and skeleton loading states
+- Layout: 2/3 chart, 1/3 readiness indicator on desktop
 
 ### Task W1.6: Rating Filters & Sorting (Web)
 

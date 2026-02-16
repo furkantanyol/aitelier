@@ -3,11 +3,7 @@
 import { getAuthUser } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
-import {
-  validateApiKey,
-  fetchModels,
-  type TogetherModel,
-} from '@/lib/providers/together';
+import { validateApiKey, fetchModels, type TogetherModel } from '@/lib/providers/together';
 
 // Re-export provider functions so existing imports from settings/actions still work
 export { validateApiKey, fetchModels, type TogetherModel };
@@ -176,20 +172,52 @@ export async function inviteTeamMember(
 ) {
   await getAuthUser(); // Verify caller is authenticated
 
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  const hasServiceKey = !!(
+    process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+  if (!hasServiceKey) {
     return { error: 'Invites require SUPABASE_SECRET_KEY to be configured' };
   }
 
   const admin = createAdminClient();
-  const { data: inviteData, error: inviteError } = await admin.auth.admin.inviteUserByEmail(email);
 
-  if (inviteError || !inviteData?.user) {
-    return { error: inviteError?.message ?? 'Failed to send invite' };
+  // Check if user already exists in Supabase Auth
+  const { data: existingUsers } = await admin.auth.admin.listUsers();
+  const existingUser = existingUsers?.users?.find(
+    (u) => u.email?.toLowerCase() === email.toLowerCase(),
+  );
+
+  let userId: string;
+
+  if (existingUser) {
+    // User already has an account — just add them to the project
+    userId = existingUser.id;
+  } else {
+    // New user — send invite email via Supabase Auth
+    const { data: inviteData, error: inviteError } =
+      await admin.auth.admin.inviteUserByEmail(email);
+
+    if (inviteError || !inviteData?.user) {
+      return { error: inviteError?.message ?? 'Failed to send invite' };
+    }
+    userId = inviteData.user.id;
+  }
+
+  // Check if already a member of this project
+  const { data: existing } = await admin
+    .from('project_members')
+    .select('user_id')
+    .eq('project_id', projectId)
+    .eq('user_id', userId)
+    .single();
+
+  if (existing) {
+    return { error: 'This user is already a member of this project' };
   }
 
   const { error: memberError } = await admin.from('project_members').insert({
     project_id: projectId,
-    user_id: inviteData.user.id,
+    user_id: userId,
     role,
   });
 

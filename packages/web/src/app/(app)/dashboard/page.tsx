@@ -12,9 +12,11 @@ import {
   getTrainingRuns,
   getRecentActivity,
 } from './actions';
-import { Database, BarChart3, CheckCircle2, Sparkles } from 'lucide-react';
+import { Database, BarChart3, CheckCircle2, Sparkles, Plus, ArrowRight } from 'lucide-react';
 import { getUserProjects } from '@/lib/projects';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 async function DashboardMetrics({ projectId }: { projectId: string }) {
   const { metrics, error } = await getDashboardMetrics(projectId);
@@ -187,9 +189,36 @@ export default async function DashboardPage() {
 
   if (!activeProjectId) {
     return (
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Select a project to view metrics</p>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Get started by creating your first project
+          </p>
+        </div>
+        <Card className="border-primary/20 bg-primary/5">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Plus className="size-5 text-primary" />
+              <CardTitle className="text-base">What&apos;s next?</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div>
+              <h4 className="mb-1 font-medium">Create your first project</h4>
+              <p className="text-sm text-muted-foreground">
+                Set up a fine-tuning project with your provider, model, and system prompt. The setup
+                wizard will guide you through each step.
+              </p>
+            </div>
+            <Button asChild className="w-full">
+              <a href="/setup">
+                Create Project
+                <ArrowRight className="ml-2 size-4" />
+              </a>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }

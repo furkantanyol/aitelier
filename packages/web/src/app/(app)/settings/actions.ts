@@ -30,7 +30,12 @@ export async function getProjectSettings(projectId: string) {
   return { project };
 }
 
-export async function updateProjectBasics(projectId: string, name: string, description: string) {
+export async function updateProjectBasics(
+  projectId: string,
+  name: string,
+  description: string,
+  qualityThreshold?: number,
+) {
   const { supabase } = await getAuthUser();
 
   const { error } = await supabase
@@ -38,6 +43,7 @@ export async function updateProjectBasics(projectId: string, name: string, descr
     .update({
       name,
       system_prompt: description || null,
+      ...(qualityThreshold !== undefined && { quality_threshold: qualityThreshold }),
     })
     .eq('id', projectId);
 
@@ -63,6 +69,23 @@ export async function updateProviderConfig(projectId: string, apiKey: string, mo
       provider_config: { api_key: apiKey },
       base_model: model,
     })
+    .eq('id', projectId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath('/settings');
+  revalidatePath('/dashboard');
+  return { success: true };
+}
+
+export async function updateBaseModel(projectId: string, model: string) {
+  const { supabase } = await getAuthUser();
+
+  const { error } = await supabase
+    .from('projects')
+    .update({ base_model: model })
     .eq('id', projectId);
 
   if (error) {

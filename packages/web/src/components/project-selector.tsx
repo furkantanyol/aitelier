@@ -36,7 +36,14 @@ export function ProjectSelector() {
       <SelectContent>
         {projects.map((p) => (
           <SelectItem key={p.id} value={p.id}>
-            {p.name}
+            <div className="flex flex-col">
+              <span>{p.name}</span>
+              {p.base_model && (
+                <span className="text-xs text-muted-foreground">
+                  {p.base_model.split('/').pop()}
+                </span>
+              )}
+            </div>
           </SelectItem>
         ))}
         <SelectSeparator />

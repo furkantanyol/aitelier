@@ -179,13 +179,16 @@ function ActivitySkeleton() {
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
-  let activeProjectId = cookieStore.get('active_project')?.value ?? null;
+  const cachedProjectId = cookieStore.get('active_project')?.value ?? null;
 
-  // Fallback to first project if cookie isn't set yet
-  if (!activeProjectId) {
-    const projects = await getUserProjects();
-    activeProjectId = projects[0]?.id ?? null;
-  }
+  // Get all user projects
+  const projects = await getUserProjects();
+
+  // Validate cached project exists, otherwise use first project
+  let activeProjectId =
+    cachedProjectId && projects.some((p) => p.id === cachedProjectId)
+      ? cachedProjectId
+      : (projects[0]?.id ?? null);
 
   if (!activeProjectId) {
     return (

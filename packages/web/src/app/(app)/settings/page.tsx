@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { SettingsContent } from '@/components/settings-content';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getProjectName } from '@/lib/projects';
 
 export default async function SettingsPage() {
   const cookieStore = await cookies();
@@ -12,10 +13,14 @@ export default async function SettingsPage() {
     redirect('/setup');
   }
 
+  const projectName = await getProjectName(activeProjectId);
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold tracking-tight">Settings</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Settings{projectName ? ` — ${projectName}` : ''}
+        </h1>
         <p className="text-muted-foreground">
           Manage your project configuration, team members, and training defaults
         </p>

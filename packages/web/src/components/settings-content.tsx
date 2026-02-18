@@ -45,6 +45,7 @@ import {
   validateApiKey,
   fetchModels,
   updateProviderConfig,
+  updateBaseModel,
   updateTrainingDefaults,
   getTeamMembers,
   inviteTeamMember,
@@ -120,11 +121,12 @@ function ProjectBasicsSection({
 }) {
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.system_prompt ?? '');
+  const [qualityThreshold, setQualityThreshold] = useState(project.quality_threshold ?? 8);
   const [saving, setSaving] = useState(false);
 
   async function handleSave() {
     setSaving(true);
-    const result = await updateProjectBasics(projectId, name, description);
+    const result = await updateProjectBasics(projectId, name, description, qualityThreshold);
     setSaving(false);
 
     if (result.error) {
@@ -134,7 +136,10 @@ function ProjectBasicsSection({
     }
   }
 
-  const hasChanges = name !== project.name || description !== (project.system_prompt ?? '');
+  const hasChanges =
+    name !== project.name ||
+    description !== (project.system_prompt ?? '') ||
+    qualityThreshold !== (project.quality_threshold ?? 8);
 
   return (
     <Card>
@@ -164,6 +169,21 @@ function ProjectBasicsSection({
             rows={6}
           />
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="qualityThreshold">Minimum rating for training</Label>
+          <Input
+            id="qualityThreshold"
+            type="number"
+            min={1}
+            max={10}
+            value={qualityThreshold}
+            onChange={(e) => setQualityThreshold(parseInt(e.target.value) || 8)}
+            className="w-24"
+          />
+          <p className="text-xs text-muted-foreground">
+            Examples rated below this threshold are excluded from training splits (1–10)
+          </p>
+        </div>
         <Button onClick={handleSave} disabled={!hasChanges || saving}>
           {saving && <Loader2 className="mr-2 size-4 animate-spin" />}
           Save Changes
@@ -184,55 +204,13 @@ function ProviderConfigSection({
   project: ProjectSettings;
   projectId: string;
 }) {
-  const [apiKey, setApiKey] = useState(project.provider_config.api_key);
-  const [model, setModel] = useState(project.base_model);
-  const [keyStatus, setKeyStatus] = useState<'idle' | 'testing' | 'valid' | 'invalid'>('idle');
-  const [keyError, setKeyError] = useState<string | null>(null);
-  const [models, setModels] = useState<(TogetherModel & { recommended: boolean })[]>([]);
-  const [modelsLoading, setModelsLoading] = useState(false);
-  const [modelsError, setModelsError] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-
-  async function handleTestConnection() {
-    setKeyStatus('testing');
-    setKeyError(null);
-
-    const result = await validateApiKey(apiKey);
-
-    if (result.valid) {
-      setKeyStatus('valid');
-      setModelsLoading(true);
-      const modelsResult = await fetchModels(apiKey);
-      setModels(modelsResult.models);
-      setModelsError(modelsResult.error ?? null);
-      setModelsLoading(false);
-    } else {
-      setKeyStatus('invalid');
-      setKeyError(result.error ?? 'Invalid API key');
-    }
-  }
-
-  async function handleSave() {
-    setSaving(true);
-    const result = await updateProviderConfig(projectId, apiKey, model);
-    setSaving(false);
-
-    if (result.error) {
-      toast.error(result.error);
-    } else {
-      toast.success('Provider configuration updated');
-    }
-  }
-
-  const hasChanges = apiKey !== project.provider_config.api_key || model !== project.base_model;
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>Provider Configuration</CardTitle>
         <CardDescription>Manage your Together.ai API key and base model</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         <div className="space-y-2">
           <Label>Provider</Label>
           <div className="flex gap-2">
@@ -248,82 +226,177 @@ function ProviderConfigSection({
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="apiKey">API key</Label>
-          <div className="flex gap-2">
-            <Input
-              id="apiKey"
-              type="password"
-              placeholder="Enter your Together.ai API key"
-              value={apiKey}
-              onChange={(e) => {
-                setApiKey(e.target.value);
-                setKeyStatus('idle');
-                setKeyError(null);
-              }}
-            />
-            <Button
-              variant="outline"
-              onClick={handleTestConnection}
-              disabled={!apiKey.trim() || keyStatus === 'testing'}
-            >
-              {keyStatus === 'testing' ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : keyStatus === 'valid' ? (
-                <Check className="size-4 text-green-500" />
-              ) : keyStatus === 'invalid' ? (
-                <X className="size-4 text-destructive" />
-              ) : (
-                'Test'
-              )}
-            </Button>
-          </div>
-          {keyStatus === 'valid' && (
-            <p className="text-sm text-green-500">Connected successfully</p>
-          )}
-          {keyError && <p className="text-sm text-destructive">{keyError}</p>}
-        </div>
-
-        {keyStatus === 'valid' && (
-          <div className="space-y-2">
-            <Label>Base model</Label>
-            {modelsLoading ? (
-              <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
-                <Loader2 className="size-4 animate-spin" />
-                Loading models...
-              </div>
-            ) : modelsError ? (
-              <p className="text-sm text-destructive">{modelsError}</p>
-            ) : (
-              <Select value={model} onValueChange={(value) => setModel(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a model" />
-                </SelectTrigger>
-                <SelectContent>
-                  {models.map((m) => (
-                    <SelectItem key={m.id} value={m.id}>
-                      <div className="flex items-center gap-2">
-                        <span>{m.display_name}</span>
-                        {m.recommended && (
-                          <Badge variant="secondary" className="text-xs">
-                            Recommended
-                          </Badge>
-                        )}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
-        )}
-
-        <Button onClick={handleSave} disabled={!hasChanges || saving || keyStatus !== 'valid'}>
-          {saving && <Loader2 className="mr-2 size-4 animate-spin" />}
-          Save Changes
-        </Button>
+        <Separator />
+        <ApiKeySubSection project={project} projectId={projectId} />
+        <Separator />
+        <BaseModelSubSection project={project} projectId={projectId} />
       </CardContent>
     </Card>
+  );
+}
+
+function ApiKeySubSection({ project, projectId }: { project: ProjectSettings; projectId: string }) {
+  const [apiKey, setApiKey] = useState(project.provider_config.api_key);
+  const [keyStatus, setKeyStatus] = useState<'idle' | 'testing' | 'valid' | 'invalid'>('idle');
+  const [keyError, setKeyError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  async function handleTestConnection() {
+    setKeyStatus('testing');
+    setKeyError(null);
+    const result = await validateApiKey(apiKey);
+    if (result.valid) {
+      setKeyStatus('valid');
+    } else {
+      setKeyStatus('invalid');
+      setKeyError(result.error ?? 'Invalid API key');
+    }
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    // Save key only; preserve existing model
+    const result = await updateProviderConfig(projectId, apiKey, project.base_model);
+    setSaving(false);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success('API key updated');
+    }
+  }
+
+  const hasChanges = apiKey !== project.provider_config.api_key;
+
+  return (
+    <div className="space-y-3">
+      <div className="space-y-1">
+        <p className="text-sm font-medium">API Key</p>
+        <p className="text-xs text-muted-foreground">Your Together.ai secret key</p>
+      </div>
+      <div className="space-y-2">
+        <div className="flex gap-2">
+          <Input
+            id="apiKey"
+            type="password"
+            placeholder="Enter your Together.ai API key"
+            value={apiKey}
+            onChange={(e) => {
+              setApiKey(e.target.value);
+              setKeyStatus('idle');
+              setKeyError(null);
+            }}
+          />
+          <Button
+            variant="outline"
+            onClick={handleTestConnection}
+            disabled={!apiKey.trim() || keyStatus === 'testing'}
+          >
+            {keyStatus === 'testing' ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : keyStatus === 'valid' ? (
+              <Check className="size-4 text-green-500" />
+            ) : keyStatus === 'invalid' ? (
+              <X className="size-4 text-destructive" />
+            ) : (
+              'Test'
+            )}
+          </Button>
+        </div>
+        {keyStatus === 'valid' && <p className="text-sm text-green-500">Connected successfully</p>}
+        {keyError && <p className="text-sm text-destructive">{keyError}</p>}
+      </div>
+      <Button onClick={handleSave} disabled={!hasChanges || saving}>
+        {saving && <Loader2 className="mr-2 size-4 animate-spin" />}
+        Save API Key
+      </Button>
+    </div>
+  );
+}
+
+function BaseModelSubSection({
+  project,
+  projectId,
+}: {
+  project: ProjectSettings;
+  projectId: string;
+}) {
+  const [model, setModel] = useState(project.base_model);
+  const [models, setModels] = useState<(TogetherModel & { recommended: boolean })[]>([]);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsError, setModelsError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const storedKey = project.provider_config.api_key;
+    if (!storedKey) return;
+
+    async function loadModels() {
+      setModelsLoading(true);
+      const result = await fetchModels(storedKey);
+      setModels(result.models);
+      setModelsError(result.error ?? null);
+      setModelsLoading(false);
+    }
+    loadModels();
+  }, [project.provider_config.api_key]);
+
+  async function handleSave() {
+    setSaving(true);
+    const result = await updateBaseModel(projectId, model);
+    setSaving(false);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success('Base model updated');
+    }
+  }
+
+  const hasChanges = model !== project.base_model;
+
+  return (
+    <div className="space-y-3">
+      <div className="space-y-1">
+        <p className="text-sm font-medium">Base Model</p>
+        <p className="text-xs text-muted-foreground">The model to fine-tune from</p>
+      </div>
+      {!project.provider_config.api_key ? (
+        <p className="text-sm text-muted-foreground">Save an API key above to load models.</p>
+      ) : modelsLoading ? (
+        <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
+          <Loader2 className="size-4 animate-spin" />
+          Loading models...
+        </div>
+      ) : modelsError ? (
+        <p className="text-sm text-destructive">{modelsError}</p>
+      ) : (
+        <Select value={model} onValueChange={(value) => setModel(value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a model" />
+          </SelectTrigger>
+          <SelectContent>
+            {models.map((m) => (
+              <SelectItem key={m.id} value={m.id}>
+                <div className="flex items-center gap-2">
+                  <span>{m.display_name}</span>
+                  {m.recommended && (
+                    <Badge variant="secondary" className="text-xs">
+                      Recommended
+                    </Badge>
+                  )}
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+      <Button
+        onClick={handleSave}
+        disabled={!hasChanges || saving || !project.provider_config.api_key}
+      >
+        {saving && <Loader2 className="mr-2 size-4 animate-spin" />}
+        Save Model
+      </Button>
+    </div>
   );
 }
 
